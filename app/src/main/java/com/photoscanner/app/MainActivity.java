@@ -62,11 +62,12 @@ public class MainActivity extends AppCompatActivity {
     private View permissionContainer;
     private MaterialButton requestPermissionButton;
     private TextView permissionStatusText;
+    private TextView versionTextView;
     private MaterialButton checkPermissionsButton;
     private MaterialButton forceStartButton;
     private MaterialButton bypassButton;
-    private ImageCapture imageCapture;
     private final ExecutorService cameraExecutor = Executors.newSingleThreadExecutor();
+    private ImageCapture imageCapture;
     
     // Store the most recently captured image URI
     private Uri lastCapturedImageUri = null;
@@ -139,7 +140,13 @@ public class MainActivity extends AppCompatActivity {
             checkPermissionsButton = findViewById(R.id.checkPermissionsButton);
             forceStartButton = findViewById(R.id.forceStartButton);
             bypassButton = findViewById(R.id.bypassButton);
+            versionTextView = findViewById(R.id.versionTextView);
             
+            // Set version text from BuildConfig
+            String versionText = "v" + BuildConfig.VERSION_NAME;
+            versionTextView.setText(versionText);
+            
+            // Force set initial visibility
             // Force set initial visibility
             viewFinder.setVisibility(View.VISIBLE);
             permissionContainer.setVisibility(View.GONE);
