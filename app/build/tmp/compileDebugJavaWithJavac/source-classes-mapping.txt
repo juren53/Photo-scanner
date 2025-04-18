@@ -1,0 +1,5 @@
+com/photoscanner/app/BuildConfig.java
+ com.photoscanner.app.BuildConfig
+com/photoscanner/app/MainActivity.java
+ com.photoscanner.app.MainActivity
+ com.photoscanner.app.MainActivity$1

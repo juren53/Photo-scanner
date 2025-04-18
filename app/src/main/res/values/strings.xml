@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Photo Scanner</string>
+    <string name="capture_button">Capture</string>
+    <string name="view_photos">View Photos</string>
+    <string name="permission_required">Camera and storage permissions are required for this app</string>
+    <string name="permission_rationale">This app needs access to your camera to take photos and storage to save them</string>
+</resources>
+

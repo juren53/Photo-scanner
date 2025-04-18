@@ -1,0 +1,107 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.photoscanner.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="31" />
+9-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml
+10
+11    <!-- Camera permission -->
+12    <uses-permission android:name="android.permission.CAMERA" />
+12-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:6:5-65
+12-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:6:22-62
+13
+14    <uses-feature
+14-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:7:5-84
+15        android:name="android.hardware.camera"
+15-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:7:19-57
+16        android:required="true" />
+16-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:7:58-81
+17
+18    <!-- Storage permissions -->
+19    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+19-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:10:5-80
+19-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:10:22-77
+20    <uses-permission
+20-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:11:5-12:38
+21        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+21-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:11:22-78
+22        android:maxSdkVersion="29" />
+22-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:12:9-35
+23
+24    <!-- For Android 11+ (API 30+), we'll use scoped storage instead -->
+25    <application
+25-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:15:5-42:19
+26        android:allowBackup="true"
+26-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:16:9-35
+27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+27-->[androidx.core:core:1.5.0] /home/juren/.gradle/caches/transforms-3/8091e88265a2bdec2561f7dc53bbc273/transformed/core-1.5.0/AndroidManifest.xml:24:18-86
+28        android:debuggable="true"
+29        android:icon="@mipmap/ic_launcher"
+29-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:17:9-43
+30        android:label="@string/app_name"
+30-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:18:9-41
+31        android:roundIcon="@mipmap/ic_launcher_round"
+31-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:19:9-54
+32        android:supportsRtl="true"
+32-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:20:9-35
+33        android:theme="@style/Theme.PhotoScanner" >
+33-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:21:9-50
+34        <activity
+34-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:23:9-30:20
+35            android:name="com.photoscanner.app.MainActivity"
+35-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:24:13-41
+36            android:exported="true" >
+36-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:25:13-36
+37            <intent-filter>
+37-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:26:13-29:29
+38                <action android:name="android.intent.action.MAIN" />
+38-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:27:17-69
+38-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:27:25-66
+39
+40                <category android:name="android.intent.category.LAUNCHER" />
+40-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:28:17-77
+40-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:28:27-74
+41            </intent-filter>
+42        </activity>
+43
+44        <!-- FileProvider for sharing photos -->
+45        <provider
+46            android:name="androidx.core.content.FileProvider"
+46-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:34:13-62
+47            android:authorities="com.photoscanner.app.fileprovider"
+47-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:35:13-64
+48            android:exported="false"
+48-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:36:13-37
+49            android:grantUriPermissions="true" >
+49-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:37:13-47
+50            <meta-data
+50-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:38:13-40:54
+51                android:name="android.support.FILE_PROVIDER_PATHS"
+51-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:39:17-67
+52                android:resource="@xml/file_paths" />
+52-->/home/juren/Projects/Photo-scanner/app/src/main/AndroidManifest.xml:40:17-51
+53        </provider>
+54
+55        <service
+55-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:26:9-35:19
+56            android:name="androidx.camera.core.impl.MetadataHolderService"
+56-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:27:13-75
+57            android:enabled="false"
+57-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:28:13-36
+58            android:exported="false" >
+58-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:29:13-37
+59            <meta-data
+59-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:32:13-34:89
+60                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+60-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:33:17-103
+61                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+61-->[androidx.camera:camera-camera2:1.1.0] /home/juren/.gradle/caches/transforms-3/d283de5319ef59965a0cbf109df8c9c6/transformed/jetified-camera-camera2-1.1.0/AndroidManifest.xml:34:17-86
+62        </service>
+63    </application>
+64
+65</manifest>
