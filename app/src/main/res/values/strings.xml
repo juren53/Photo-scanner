@@ -1,8 +1,54 @@
 <resources>
     <string name="app_name">Photo Scanner</string>
-    <string name="capture_button">Capture</string>
+    <string name="photo_added_to_batch">Photo added to batch</string>
+    <string name="continue_scanning">Would you like to continue scanning more photos?</string>
+    <string name="batch_empty">No photos in batch</string>
+    <string name="finish_batch">Finish Batch</string>
     <string name="view_photos">View Photos</string>
-    <string name="permission_required">Camera and storage permissions are required for this app</string>
-    <string name="permission_rationale">This app needs access to your camera to take photos and storage to save them</string>
+    <string name="preview_image">Preview image</string>
+    <string name="retry">Retry</string>
+    <string name="crop">Crop</string>
+    <string name="detecting_edges">Detecting edges...</string>
+    
+    <!-- Batch scanning strings -->
+    <string name="batch_mode">Batch Mode</string>
+    <string name="batch_counter">Batch: %1$d</string>
+    <string name="review_batch">Review Batch</string>
+    <string name="batch_mode_description">Capture multiple photos in sequence</string>
+    <string name="single_mode_description">Capture one photo at a time</string>
+    <string name="continue_batch">Continue Batch</string>
+    <string name="capture_button">Capture</string>
+    <string name="permission_required">Camera permission is required to use this app</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="nav_drawer_open">Open navigation drawer</string>
+    <string name="nav_drawer_close">Close navigation drawer</string>
+    <string name="nav_metatags">Meta-tags</string>
+    <string name="nav_edit">Edit</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_help">Help</string>
+    <string name="nav_about">About</string>
+    
+    <!-- About Dialog -->
+    <string name="about_title">About Photo Scanner</string>
+    <string name="about_developer">Developer: Photo Scanner Team</string>
+    <string name="about_release_date">Release Date: April 19, 2025</string>
+    <string name="about_version">Version: 1.1</string>
+    <string name="about_close">Close</string>
+    
+    <!-- Help Dialog -->
+    <string name="help_title">Help</string>
+    <string name="help_content">This app allows you to capture and organize your photos.\n\n• Use the camera button to take photos\n• View your photos in the gallery\n• Enable batch mode to capture multiple photos</string>
+    <string name="help_close">Got it</string>
+    
+    <!-- Statistics Activity -->
+    <string name="statistics_title">Image Statistics</string>
+    <string name="no_images_found">No images found</string>
+    <string name="image_size_label">Size: %1$s</string>
+    <string name="image_resolution_label">Resolution: %1$s</string>
+    <string name="image_date_label">Date: %1$s</string>
+    <string name="exif_metadata_title">EXIF Metadata</string>
+    <string name="iptc_metadata_title">IPTC Metadata</string>
+    <string name="no_metadata_available">No metadata available</string>
 </resources>
 

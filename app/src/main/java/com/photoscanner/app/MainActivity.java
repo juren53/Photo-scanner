@@ -3,7 +3,11 @@ package com.photoscanner.app;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
@@ -12,7 +16,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -24,10 +29,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
@@ -38,23 +46,39 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "PhotoScannerApp";
+public class MainActivity extends AppCompatActivity 
+        implements NavigationView.OnNavigationItemSelectedListener {
     
-    // Permission request constants for Android 9 and lower
-    private static final String[] REQUIRED_PERMISSIONS_LEGACY = new String[] {
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-    
-    
-    // Permission request constants for Android 10+
+    private static final String TAG = "MainActivity";
+
+    // Define required permissions
     private static final String[] REQUIRED_PERMISSIONS_MODERN = new String[] {
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+        Manifest.permission.CAMERA,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+
+    private static final String[] REQUIRED_PERMISSIONS_LEGACY = new String[] {
+        Manifest.permission.CAMERA,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     
+    /**
+     * Set up batch mode controls, including switch functionality and button visibility
+     */
+    private void setupBatchModeControls() {
+        Log.d(TAG, "Setting up batch mode controls");
+        batchControlPanel = findViewById(R.id.batchControlPanel);
+        batchModeSwitch = findViewById(R.id.batchModeSwitch);
+        batchModeSwitch = findViewById(R.id.batchModeSwitch);
+        batchCounterTextView = findViewById(R.id.batchCounterTextView);
+        reviewBatchButton = findViewById(R.id.reviewBatchButton);
+        
+        // BatchScanManager references removed for v1.0 compatibility
+        // if (batchScanManager == null) {
+        //     batchScanManager = BatchScanManager.getInstance();
+        // }
+    }
     // UI components
     private PreviewView viewFinder;
     private MaterialButton captureButton;
@@ -66,9 +90,20 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton checkPermissionsButton;
     private MaterialButton forceStartButton;
     private MaterialButton bypassButton;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
     private final ExecutorService cameraExecutor = Executors.newSingleThreadExecutor();
     private ImageCapture imageCapture;
     
+    // Batch mode UI components
+    private View batchControlPanel;
+    private SwitchCompat batchModeSwitch;
+    private TextView batchCounterTextView;
+    private MaterialButton reviewBatchButton;
+    // BatchScanManager removed for v1.0 compatibility
+    // private BatchScanManager batchScanManager;
+    private boolean isBatchMode = false;
     // Store the most recently captured image URI
     private Uri lastCapturedImageUri = null;
     // Activity launcher for permissions
@@ -121,96 +156,131 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: Starting Photo Scanner app");
         setContentView(R.layout.activity_main);
         
-        try {
-            // Initialize UI components
-            Log.d(TAG, "onCreate: Initializing UI components");
-            viewFinder = findViewById(R.id.viewFinder);
-            captureButton = findViewById(R.id.captureButton);
-            viewPhotosButton = findViewById(R.id.viewPhotosButton);
-            permissionContainer = findViewById(R.id.permissionContainer);
-            requestPermissionButton = findViewById(R.id.requestPermissionButton);
-            permissionStatusText = findViewById(R.id.permissionStatusText);
-            checkPermissionsButton = findViewById(R.id.checkPermissionsButton);
-            forceStartButton = findViewById(R.id.forceStartButton);
-            bypassButton = findViewById(R.id.bypassButton);
-            versionTextView = findViewById(R.id.versionTextView);
-            
-            // Set version text from BuildConfig
-            String versionText = "v" + BuildConfig.VERSION_NAME;
-            versionTextView.setText(versionText);
-            
-            // Force set initial visibility
-            // Force set initial visibility
-            viewFinder.setVisibility(View.VISIBLE);
+        // Setup toolbar
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        
+        Log.d(TAG, "onCreate: Initializing UI elements");
+        // Initialize all UI elements
+        viewFinder = findViewById(R.id.viewFinder);
+        captureButton = findViewById(R.id.captureButton);
+        viewPhotosButton = findViewById(R.id.viewPhotosButton);
+        permissionContainer = findViewById(R.id.permissionContainer);
+        requestPermissionButton = findViewById(R.id.requestPermissionButton);
+        permissionStatusText = findViewById(R.id.permissionStatusText);
+        checkPermissionsButton = findViewById(R.id.checkPermissionsButton);
+        forceStartButton = findViewById(R.id.forceStartButton);
+        bypassButton = findViewById(R.id.bypassButton);
+        versionTextView = findViewById(R.id.versionTextView);
+        
+        // Set version text
+        String versionText = "v" + BuildConfig.VERSION_NAME;
+        versionTextView.setText(versionText);
+        // Set up batch mode controls
+        setupBatchModeControls();
+        
+        // Set up navigation drawer
+        setupNavigationDrawer();
+        
+        Log.d(TAG, "onCreate: Setting up click listeners");
+        // Set click listeners
+        captureButton.setOnClickListener(v -> takePhoto());
+        viewPhotosButton.setOnClickListener(v -> openGallery());
+        requestPermissionButton.setOnClickListener(v -> {
+            Log.d(TAG, "Permission button clicked");
+            requestPermissions();
+        });
+        
+        // Add click listeners for debug buttons
+        checkPermissionsButton.setOnClickListener(v -> {
+            Log.d(TAG, "Check permissions button clicked");
+            updatePermissionStatusText();
+        });
+        
+        forceStartButton.setOnClickListener(v -> {
+            Log.d(TAG, "Force start button clicked");
+            forceStartCamera();
+        });
+        
+        // Add a long press listener to force retry permission check
+        requestPermissionButton.setOnLongClickListener(v -> {
+            Log.d(TAG, "Permission button LONG pressed - forcing camera start attempt");
+            Toast.makeText(this, "Forcing camera start attempt", Toast.LENGTH_SHORT).show();
+            forceStartCamera();
+            return true;
+        });
+        
+        // Add click listener for bypass button
+        bypassButton.setOnClickListener(v -> {
+            Log.d(TAG, "BYPASS button clicked - completely bypassing permission system");
+            Toast.makeText(this, "Bypassing permissions completely", Toast.LENGTH_SHORT).show();
+            completelyBypassPermissions();
+        });
+        
+        // Check permissions
+        boolean hasPermissions = allPermissionsGranted();
+        Log.d(TAG, "onCreate: Permissions check result: " + hasPermissions);
+        
+        if (hasPermissions) {
+            Log.d(TAG, "onCreate: All permissions already granted, starting camera");
             permissionContainer.setVisibility(View.GONE);
-            // Set click listeners
-            Log.d(TAG, "onCreate: Setting up click listeners");
-            captureButton.setOnClickListener(v -> takePhoto());
-            viewPhotosButton.setOnClickListener(v -> openGallery());
-            requestPermissionButton.setOnClickListener(v -> {
-                Log.d(TAG, "Permission button clicked");
-                requestPermissions();
-            });
+            viewFinder.setVisibility(View.VISIBLE);
+            startCamera();
+        } else {
+            Log.d(TAG, "onCreate: Permissions not granted, showing permission UI");
+            requestPermissionButton.setText("Grant Permissions");
+            permissionContainer.setVisibility(View.VISIBLE);
+            viewFinder.setVisibility(View.GONE);
+            updatePermissionStatusText();
             
-            // Add click listeners for debug buttons
-            checkPermissionsButton.setOnClickListener(v -> {
-                Log.d(TAG, "Check permissions button clicked");
-                updatePermissionStatusText();
-            });
-            
-            forceStartButton.setOnClickListener(v -> {
-                Log.d(TAG, "Force start button clicked");
-                forceStartCamera();
-            });
-            
-            // Add a long press listener to force retry permission check
-            requestPermissionButton.setOnLongClickListener(v -> {
-                Log.d(TAG, "Permission button LONG pressed - forcing camera start attempt");
-                Toast.makeText(this, "Forcing camera start attempt", Toast.LENGTH_SHORT).show();
-                forceStartCamera();
-                return true;
-            });
-            
-            // Add click listener for bypass button
-            bypassButton.setOnClickListener(v -> {
-                Log.d(TAG, "BYPASS button clicked - completely bypassing permission system");
-                Toast.makeText(this, "Bypassing permissions completely", Toast.LENGTH_SHORT).show();
-                completelyBypassPermissions();
-            });
-            Log.d(TAG, "onCreate: Checking permissions");
-            boolean hasPermissions = allPermissionsGranted();
-            Log.d(TAG, "onCreate: Permissions check result: " + hasPermissions);
-            
-            if (hasPermissions) {
-                Log.d(TAG, "onCreate: All permissions already granted, starting camera");
-                permissionContainer.setVisibility(View.GONE);
-                viewFinder.setVisibility(View.VISIBLE);
-                startCamera();
-            } else {
-                Log.d(TAG, "onCreate: Permissions not granted, showing permission UI");
-                // Update the request button text to make it clearer
-                requestPermissionButton.setText("Grant Permissions");
-                permissionContainer.setVisibility(View.VISIBLE);
-                viewFinder.setVisibility(View.GONE);
-                // Update permission status text
-                updatePermissionStatusText();
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "onCreate: Error initializing app", e);
-            Toast.makeText(this, "Error initializing app", Toast.LENGTH_LONG).show();
+            // Automatically request permissions when app starts
+            requestPermissions();
         }
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: Activity resumed");
+        
+        // Check permissions again in case they changed while app was paused
+        boolean hasPermissions = allPermissionsGranted();
+        Log.d(TAG, "onResume: Permissions check result: " + hasPermissions);
+        
+        // Update batch counter in case it changed
+        try {
+            updateBatchCounterUI();
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating batch counter", e);
+        }
+        
+        // Update UI based on current permission status
+        if (hasPermissions) {
+            Log.d(TAG, "onResume: Permissions granted, ensuring camera is running");
+            permissionContainer.setVisibility(View.GONE);
+            viewFinder.setVisibility(View.VISIBLE);
+            
+            // Only restart camera if it's not already set up
+            if (imageCapture == null) {
+                startCamera();
+            }
+        } else {
+            Log.d(TAG, "onResume: Permissions not granted, showing permission UI");
+            permissionContainer.setVisibility(View.VISIBLE);
+            viewFinder.setVisibility(View.GONE);
+            updatePermissionStatusText();
+        }
+    }
+    
+    // Remove duplicate onResume method
+    /* 
+    @Override
+    protected void onResume() {
         Log.d(TAG, "onResume: Activity resumed");
         // Check permissions again in case they changed while app was paused
         boolean hasPermissions = allPermissionsGranted();
@@ -234,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
             updatePermissionStatusText();
         }
     }
+    */
     
     @Override
     protected void onDestroy() {
@@ -275,6 +346,12 @@ public class MainActivity extends AppCompatActivity {
                    " | Granted: " + granted);
         }
         Log.d(TAG, "======================================");
+    }
+
+    private void updateBatchCounterUI() {
+        // Placeholder for missing method
+        Log.d(TAG, "updateBatchCounterUI called");
+        // No actual implementation since BatchScanManager is excluded for v1.0
     }
     
     private boolean allPermissionsGranted() {
@@ -535,6 +612,110 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "Failed to open gallery", e);
             Toast.makeText(this, "Cannot open gallery", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    /**
+     * Set up the navigation drawer, including the drawer toggle and listener
+     */
+    private void setupNavigationDrawer() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        
+        // Set up the hamburger icon
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, 
+                R.string.nav_drawer_open, R.string.nav_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        
+        // Set up navigation item click listener
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+    
+    /**
+     * Handle navigation drawer item clicks
+     */
+    @Override
+    public boolean onNavigationItemSelected(@NonNull android.view.MenuItem item) {
+        // Handle navigation view item clicks
+        int id = item.getItemId();
+        
+        if (id == R.id.nav_metatags) {
+            // Placeholder for future implementation
+            Toast.makeText(this, "Meta-tags feature coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_edit) {
+            // Placeholder for future implementation
+            Toast.makeText(this, "Edit feature coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_statistics) {
+            // Launch the Statistics activity
+            Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
+            startActivity(statisticsIntent);
+        } else if (id == R.id.nav_help) {
+            showHelpDialog();
+        } else if (id == R.id.nav_about) {
+            showAboutDialog();
+        }
+        // Close the drawer
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    
+    /**
+     * Show the About dialog
+     */
+    private void showAboutDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_about, null);
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        
+        final AlertDialog dialog = builder.create();
+        
+        // Set version info programmatically
+        TextView versionText = dialogView.findViewById(R.id.about_version_text);
+        if (versionText != null) {
+            versionText.setText(getString(R.string.about_version));
+        }
+        
+        // Set click listener for close button
+        MaterialButton closeButton = dialogView.findViewById(R.id.about_close_button);
+        if (closeButton != null) {
+            closeButton.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        dialog.show();
+    }
+    
+    /**
+     * Show the Help dialog
+     */
+    private void showHelpDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_help, null);
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        
+        final AlertDialog dialog = builder.create();
+        
+        // Set click listener for close button
+        MaterialButton closeButton = dialogView.findViewById(R.id.help_close_button);
+        if (closeButton != null) {
+            closeButton.setOnClickListener(v -> dialog.dismiss());
+        }
+        
+        dialog.show();
+    }
+    
+    /**
+     * Handle back button press - close drawer if open
+     */
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
 }

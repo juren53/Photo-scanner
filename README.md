@@ -8,6 +8,10 @@ A simple Android application for scanning and digitizing physical photographs us
 - **Local Storage**: Save captured images to your device's gallery
 - **Gallery View**: View all captured images directly from the app
 - **Permission Handling**: Proper management of camera and storage permissions
+- **Navigation Drawer**: Easy access to app features through a hamburger menu
+- **Help & About Screens**: Easy access to app information and usage instructions
+- **Material Design UI**: Consistent styling with proper alignment and spacing
+- **Dark Mode Support**: Proper theme support for both light and dark modes
 
 ## Planned Features
 
@@ -75,6 +79,7 @@ This app is being developed in phases:
    - Edge detection
    - Auto-cropping
    - Image enhancement
+   - Metadata tagging
 
 3. **Refinement**
    - UI/UX improvements
@@ -84,9 +89,27 @@ This app is being developed in phases:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+## Versions
+
+### v1.0 (Initial Release)
+- Basic camera functionality
+- Photo capture and storage
+- Gallery access
+- Basic UI layout
+- Permission management
+
+### v1.1 (Current)
+- New app icon
+- Navigation drawer with hamburger menu
+- Help and About screens
+- Improved UI with Material Design components
+- Dark mode support
+- Consistent styling and better layout
+- See [v1.1 Release Notes](v1.1-release-notes.md) for more details
 
 ## Acknowledgements
 
 - Built with CameraX, a Jetpack library
 - Uses Android's MediaStore for modern storage access
+- Implements Material Design components for UI
 

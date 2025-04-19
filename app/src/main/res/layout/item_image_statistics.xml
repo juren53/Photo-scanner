@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Basic Info Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <!-- Image Thumbnail -->
+            <ImageView
+                android:id="@+id/image_thumbnail"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="Image thumbnail"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <!-- Basic Image Information -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+
+                <!-- Image Name -->
+                <TextView
+                    android:id="@+id/text_image_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceSubtitle1"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    tools:text="IMG_20250419_123456.jpg" />
+
+                <!-- Image Size -->
+                <TextView
+                    android:id="@+id/text_image_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    tools:text="Size: 2.5 MB" />
+
+                <!-- Image Resolution -->
+                <TextView
+                    android:id="@+id/text_image_resolution"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    tools:text="Resolution: 3840 x 2160" />
+
+                <!-- Image Date -->
+                <TextView
+                    android:id="@+id/text_image_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    tools:text="Date: 19 Apr 2025, 12:34:56" />
+            </LinearLayout>
+
+            <!-- Expand/Collapse Button -->
+            <ImageButton
+                android:id="@+id/button_expand_collapse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Expand or collapse metadata"
+                android:padding="8dp"
+                android:src="@android:drawable/arrow_down_float" />
+        </LinearLayout>
+
+        <!-- Detailed Metadata Section (Initially Hidden) -->
+        <LinearLayout
+            android:id="@+id/layout_metadata_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone"
+            android:background="#F5F5F5">
+
+            <!-- EXIF Metadata Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="EXIF Metadata"
+                android:textAppearance="?attr/textAppearanceSubtitle2"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_exif_metadata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBody2"
+                tools:text="Camera: Model XYZ\nFlash: On\nISO: 100\nExposure: 1/60s\nAperture: f/2.8" />
+
+            <!-- IPTC Metadata Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="IPTC Metadata"
+                android:textAppearance="?attr/textAppearanceSubtitle2"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_iptc_metadata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBody2"
+                tools:text="Title: Sample Photo\nDescription: A beautiful scene\nKeywords: nature, landscape\nCopyright: © 2025 Photographer" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+
