@@ -36,19 +36,22 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ProgressBar;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.navigation.NavigationView;
-import android.content.ContentUris;
-import android.media.ExifInterface;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import android.text.Editable;
+import android.text.TextWatcher;
+import com.google.android.material.textfield.TextInputEditText;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -72,7 +75,11 @@ public class MainActivity extends AppCompatActivity
     
     private static final String PREF_NAME = "PhotoScannerPrefs";
     private static final String PREF_RESOLUTION = "resolution";
+    private static final String PREF_NAME_TEMPLATE = "name_template";
+    private static final String PREF_NAME_COUNTER = "name_counter";
     private PhotoResolution currentResolution = PhotoResolution.MEDIUM; // Default
+    private String nameTemplate = "Photo";  // Default
+    private int nameCounter = 1;            // Default
     
 
     // Define required permissions
@@ -209,11 +216,14 @@ public class MainActivity extends AppCompatActivity
         setupBatchModeControls();
         
         // Load saved resolution preference
+        // Load saved resolution preference
         loadResolutionPreference();
+        
+        // Load saved naming preferences
+        loadNamingPreferences();
         
         // Set up navigation drawer
         setupNavigationDrawer();
-        Log.d(TAG, "onCreate: Setting up click listeners");
         // Set click listeners
         captureButton.setOnClickListener(v -> takePhoto());
         viewPhotosButton.setOnClickListener(v -> openGallery());
@@ -550,9 +560,12 @@ public class MainActivity extends AppCompatActivity
         
         Log.d(TAG, "takePhoto: Taking a picture");
         // Create time-stamped filename
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        String filename = "PhotoScanner_" + timestamp;
+        // Create filename using the template and counter
+        String filename = generateFileName(nameTemplate, nameCounter);
         
+        // Increment counter for next use
+        nameCounter++;
+        saveNamingPreferences();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // Android 10 (API 29) and above - Use MediaStore
             Log.d(TAG, "takePhoto: Using MediaStore for Android 10+");
@@ -632,7 +645,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Save the selected resolution preference
+     * Load the saved resolution preference
      */
     private void saveResolutionPreference(PhotoResolution resolution) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -643,7 +656,46 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Show the resolution selection dialog
+     * Load the saved naming preferences
+     */
+    private void loadNamingPreferences() {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        nameTemplate = prefs.getString(PREF_NAME_TEMPLATE, "Photo");
+        nameCounter = prefs.getInt(PREF_NAME_COUNTER, 1);
+        Log.d(TAG, "Loaded naming preferences: template=" + nameTemplate + ", counter=" + nameCounter);
+    }
+
+    /**
+     * Save the naming preferences
+     */
+    private void saveNamingPreferences() {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_NAME_TEMPLATE, nameTemplate);
+        editor.putInt(PREF_NAME_COUNTER, nameCounter);
+        editor.apply();
+        Log.d(TAG, "Saved naming preferences: template=" + nameTemplate + ", counter=" + nameCounter);
+    }
+
+    /**
+     * Generate a filename using the template and counter
+     */
+    private String generateFileName(String template, int counter) {
+        // Format counter with leading zeros based on size
+        String counterStr;
+        if (counter < 10) {
+            counterStr = String.format(Locale.US, "00%d", counter);
+        } else if (counter < 100) {
+            counterStr = String.format(Locale.US, "0%d", counter);
+        } else {
+            counterStr = String.format(Locale.US, "%d", counter);
+        }
+        
+        return template + "_" + counterStr + ".jpg";
+    }
+
+    /**
+     * Save the selected resolution preference
      */
     private void showResolutionDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_resolution, null);
@@ -721,7 +773,89 @@ public class MainActivity extends AppCompatActivity
         
         dialog.show();
     }
-    private void captureImage(ImageCapture.OutputFileOptions outputOptions) {
+
+    /**
+     * Show the rename template dialog
+     */
+    private void showRenameTemplateDialog() {
+        Log.d(TAG, "Showing rename template dialog");
+        
+        // Create and show the dialog
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_rename_template, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        
+        // Find views
+        TextInputEditText templateInput = dialogView.findViewById(R.id.rename_template_input);
+        TextInputEditText counterInput = dialogView.findViewById(R.id.rename_counter_input);
+        TextView previewText = dialogView.findViewById(R.id.rename_preview_text);
+        Button cancelButton = dialogView.findViewById(R.id.rename_cancel_button);
+        Button saveButton = dialogView.findViewById(R.id.rename_save_button);
+        
+        // Set current values
+        templateInput.setText(nameTemplate);
+        counterInput.setText(String.valueOf(nameCounter));
+        
+        // Update preview when text changes
+        TextWatcher previewUpdater = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    String template = templateInput.getText().toString().trim();
+                    int counter = Integer.parseInt(counterInput.getText().toString().trim());
+                    String preview = generateFileName(template, counter);
+                    previewText.setText(preview);
+                } catch (NumberFormatException e) {
+                    previewText.setText(getString(R.string.rename_invalid_counter));
+                }
+            }
+        };
+        
+        templateInput.addTextChangedListener(previewUpdater);
+        counterInput.addTextChangedListener(previewUpdater);
+        
+        // Initial preview
+        String preview = generateFileName(nameTemplate, nameCounter);
+        previewText.setText(preview);
+        
+        // Set button listeners
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+        
+        saveButton.setOnClickListener(v -> {
+            try {
+                String template = templateInput.getText().toString().trim();
+                int counter = Integer.parseInt(counterInput.getText().toString().trim());
+                
+                if (template.isEmpty()) {
+                    Toast.makeText(MainActivity.this, 
+                        getString(R.string.rename_empty_error), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                // Save new values
+                nameTemplate = template;
+                nameCounter = counter;
+                saveNamingPreferences();
+                
+                Toast.makeText(MainActivity.this, 
+                    getString(R.string.rename_template_saved), Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            } catch (NumberFormatException e) {
+                Toast.makeText(MainActivity.this, 
+                    getString(R.string.rename_invalid_counter), Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        dialog.show();
+    }
+    
         Log.d(TAG, "captureImage: Processing image capture");
         imageCapture.takePicture(
                 outputOptions,
@@ -827,10 +961,13 @@ public class MainActivity extends AppCompatActivity
             // Show metadata for the most recent image
             showMetadataDialog();
         } else if (id == R.id.nav_edit) {
+        } else if (id == R.id.nav_edit) {
             // Placeholder for future implementation
             Toast.makeText(this, "Edit feature coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_rename) {
+            // Show rename template dialog
+            showRenameTemplateDialog();
         } else if (id == R.id.nav_resolution) {
-            // Show resolution selection dialog
             showResolutionDialog();
         } else if (id == R.id.nav_statistics) {
             // Launch the Statistics activity

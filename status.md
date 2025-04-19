@@ -1,6 +1,6 @@
 # Photo Scanner App - Development Status
 
-## Completed Features (v1.1)
+## Completed Features (v1.2)
 
 - Implemented navigation drawer with hamburger menu
 - Added About, Help, and Settings dialogs
@@ -10,6 +10,9 @@
 - Improved UI with Material Design components and dark mode support
 - Fixed compilation issues (ListenableFuture import, GPS coordinates extraction)
 - Created proper build system with signing configuration for release builds
+- Added custom file naming system with templates and sequential numbering
+- Implemented persistent naming preferences between sessions
+- Added real-time filename preview in the rename dialog
 
 ## Batch Scanning Architecture (Ready for Integration)
 
@@ -29,7 +32,7 @@
 - Need to implement full IPTC metadata support beyond basic EXIF data
 - Optimizing performance for larger image collections
 
-## Recommended Next Steps (v1.2)
+## Recommended Next Steps (v1.3)
 
 1. Implement the Edit feature for basic photo editing capabilities:
    - Rotation, cropping, and basic adjustments
@@ -42,7 +45,7 @@
    - Add proper lifecycle handling for batch operations
 
 3. Implement metadata editing:
-   - Add IPTC metadata editing capabilities
+   - Add IPTC metadata editing capabilities using third-party libraries
    - Create custom metadata tags system
    - Add the ability to save metadata changes back to images
 
@@ -51,7 +54,7 @@
    - Tagging and search functionality
    - Export/import functionality
 
-## Build System Improvements
+## Build System
 
 - Added release signing configuration in app/build.gradle
 - Created keystore for signing release builds
@@ -61,5 +64,5 @@
 
 ## Implementation Notes
 
-The main structure of MainActivity has been significantly improved in v1.1 with proper organization and removal of duplicated code. The batch scanning components are complete and functional but need to be integrated. The app is now ready for distribution with properly signed release builds.
+The main structure of MainActivity has been significantly improved in v1.2 with proper organization and removal of duplicated code. The custom file naming system enhances user experience by allowing sequential naming of scanned photos. The batch scanning components are complete and functional but need to be integrated. The app is now ready for distribution with properly signed release builds.
 

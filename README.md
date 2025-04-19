@@ -98,7 +98,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Basic UI layout
 - Permission management
 
-### v1.1 (Current)
+### v1.1
 - New app icon
 - Navigation drawer with hamburger menu
 - Help and About screens
@@ -109,6 +109,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Dark mode support
 - Consistent styling and better layout
 - See [v1.1 Release Notes](v1.1-release-notes.md) for more details
+
+### v1.2 (Current)
+- Custom file naming system with templates
+- Sequential numbering for consecutive scans
+- Persistent naming preferences between sessions
+- Real-time filename preview
+- Fixed GPS coordinates extraction
+- Improved error handling and stability
+- See [v1.2 Release Notes](v1.2-release-notes.md) for more details
 
 ## Acknowledgements
 
