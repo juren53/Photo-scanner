@@ -102,6 +102,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - New app icon
 - Navigation drawer with hamburger menu
 - Help and About screens
+- Resolution selection (high, medium, low)
+- Image statistics activity with EXIF data display
+- Photo metadata viewing capability
 - Improved UI with Material Design components
 - Dark mode support
 - Consistent styling and better layout
