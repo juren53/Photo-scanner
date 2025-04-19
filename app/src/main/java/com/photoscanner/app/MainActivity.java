@@ -892,8 +892,14 @@ public class MainActivity extends AppCompatActivity
                                     targetHeight = 480;
                                 }
                                 
-                                // Resize the image
-                                savedUri = resizeImage(savedUri, targetWidth, targetHeight);
+                                // Get original filename without extension
+                                String originalFilename = getFileNameFromUri(savedUri);
+                                if (originalFilename.toLowerCase().endsWith(".jpg")) {
+                                    originalFilename = originalFilename.substring(0, originalFilename.length() - 4);
+                                }
+                                
+                                // Resize the image while preserving the filename
+                                savedUri = resizeImage(savedUri, targetWidth, targetHeight, originalFilename);
                                 msg = "Photo saved and resized to " + targetWidth + "x" + targetHeight;
                             } catch (Exception e) {
                                 Log.e(TAG, "Failed to resize image: " + e.getMessage(), e);
@@ -1345,7 +1351,7 @@ public class MainActivity extends AppCompatActivity
      * @return Uri of the resized image
      * @throws IOException If an error occurs during resizing
      */
-    private Uri resizeImage(Uri imageUri, int targetWidth, int targetHeight) throws IOException {
+    private Uri resizeImage(Uri imageUri, int targetWidth, int targetHeight, String originalFilename) throws IOException {
         Log.d(TAG, "Resizing image to " + targetWidth + "x" + targetHeight);
         
         // Load the bitmap from the Uri
@@ -1411,11 +1417,11 @@ public class MainActivity extends AppCompatActivity
         // Save resized bitmap
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // For Android 10+, use MediaStore
+            // For Android 10+, use MediaStore
             ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.DISPLAY_NAME, "Resized_" + System.currentTimeMillis() + ".jpg");
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, originalFilename + ".jpg");
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
             values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
-            
             Uri resizedUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             if (resizedUri == null) {
                 throw new IOException("Failed to create MediaStore entry for resized image");
@@ -1443,10 +1449,9 @@ public class MainActivity extends AppCompatActivity
             }
             
             // Create a filename for the resized image
-            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-            String filename = "Resized_" + timestamp + ".jpg";
+            // Use the original filename for the resized image
+            String filename = originalFilename + ".jpg";
             File resizedFile = new File(directory, filename);
-            
             // Save the bitmap to file
             FileOutputStream outputStream = new FileOutputStream(resizedFile);
             resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream);
