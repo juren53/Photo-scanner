@@ -54,6 +54,9 @@ import android.text.TextWatcher;
 import com.google.android.material.textfield.TextInputEditText;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -61,6 +64,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import com.google.common.util.concurrent.ListenableFuture;
+import android.media.ExifInterface;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.navigation.NavigationView;
+import android.content.ContentUris;
 public class MainActivity extends AppCompatActivity 
         implements NavigationView.OnNavigationItemSelectedListener {
     
@@ -561,16 +568,18 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "takePhoto: Taking a picture");
         // Create time-stamped filename
         // Create filename using the template and counter
+        // Create filename using the template and counter
+        // Create filename using the template and counter
         String filename = generateFileName(nameTemplate, nameCounter);
+        Log.d(TAG, "takePhoto: Using filename='" + filename + "' from template='" + nameTemplate + "', counter=" + nameCounter);
+        Log.d(TAG, "DEBUG_NAMING: Creating photo with filename='" + filename + "' from template='" + nameTemplate + "', counter=" + nameCounter);
         
         // Increment counter for next use
-        nameCounter++;
-        saveNamingPreferences();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // Android 10 (API 29) and above - Use MediaStore
             Log.d(TAG, "takePhoto: Using MediaStore for Android 10+");
             ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename);
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, filename + ".jpg");
             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
             
@@ -629,6 +638,7 @@ public class MainActivity extends AppCompatActivity
             captureImage(outputOptions);
         }
     }
+    
     /**
      * Load the saved resolution preference
      */
@@ -645,7 +655,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Load the saved resolution preference
+     * Save the selected resolution preference
      */
     private void saveResolutionPreference(PhotoResolution resolution) {
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -654,7 +664,6 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
         Log.d(TAG, "Saved resolution preference: " + resolution);
     }
-
     /**
      * Load the saved naming preferences
      */
@@ -691,7 +700,7 @@ public class MainActivity extends AppCompatActivity
             counterStr = String.format(Locale.US, "%d", counter);
         }
         
-        return template + "_" + counterStr + ".jpg";
+        return template + "_" + counterStr;
     }
 
     /**
@@ -735,11 +744,12 @@ public class MainActivity extends AppCompatActivity
             int selectedId = radioGroup.getCheckedRadioButtonId();
             
             if (selectedId == R.id.radio_high) {
+        // Set current values
                 newResolution = PhotoResolution.HIGH;
-            } else if (selectedId == R.id.radio_low) {
-                newResolution = PhotoResolution.LOW;
-            } else {
+            } else if (selectedId == R.id.radio_medium) {
                 newResolution = PhotoResolution.MEDIUM;
+            } else {
+                newResolution = PhotoResolution.LOW;
             }
             
             // Update resolution if changed
@@ -762,8 +772,8 @@ public class MainActivity extends AppCompatActivity
                 }
                 
                 Toast.makeText(
-                    MainActivity.this, 
-                    getString(R.string.resolution_changed, resolutionName), 
+                    MainActivity.this,
+                    "Resolution set to " + resolutionName,
                     Toast.LENGTH_SHORT
                 ).show();
             }
@@ -773,17 +783,17 @@ public class MainActivity extends AppCompatActivity
         
         dialog.show();
     }
-
     /**
      * Show the rename template dialog
      */
     private void showRenameTemplateDialog() {
         Log.d(TAG, "Showing rename template dialog");
         
-        // Create and show the dialog
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_rename_template, null);
+        
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
+        
         final AlertDialog dialog = builder.create();
         
         // Find views
@@ -856,12 +866,15 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
     }
     
+    /**
+     * Process image capture and save the image
+     */
+    private void captureImage(ImageCapture.OutputFileOptions outputOptions) {
         Log.d(TAG, "captureImage: Processing image capture");
         imageCapture.takePicture(
                 outputOptions,
                 cameraExecutor,
                 new ImageCapture.OnImageSavedCallback() {
-                    @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         Uri savedUri = outputFileResults.getSavedUri();
                         String msg = "Photo saved successfully";
@@ -960,7 +973,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_metatags) {
             // Show metadata for the most recent image
             showMetadataDialog();
-        } else if (id == R.id.nav_edit) {
         } else if (id == R.id.nav_edit) {
             // Placeholder for future implementation
             Toast.makeText(this, "Edit feature coming soon", Toast.LENGTH_SHORT).show();
