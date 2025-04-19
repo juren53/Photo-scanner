@@ -904,6 +904,11 @@ public class MainActivity extends AppCompatActivity
                         if (savedUri != null) {
                             // Save the URI for later use
                             lastCapturedImageUri = savedUri;
+                            
+                            // Increment the name counter and save preferences
+                            nameCounter++;
+                            saveNamingPreferences();
+                            Log.d(TAG, "Incremented name counter to: " + nameCounter);
                         }
                         
                         final String finalMsg = msg;
