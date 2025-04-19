@@ -22,6 +22,7 @@ import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,10 +30,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -50,6 +54,18 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     
     private static final String TAG = "MainActivity";
+    
+    // Resolution options
+    public enum PhotoResolution {
+        HIGH,    // Original camera resolution
+        MEDIUM,  // 1280x960 (default)
+        LOW      // 640x480
+    }
+    
+    private static final String PREF_NAME = "PhotoScannerPrefs";
+    private static final String PREF_RESOLUTION = "resolution";
+    private PhotoResolution currentResolution = PhotoResolution.MEDIUM; // Default
+    
 
     // Define required permissions
     private static final String[] REQUIRED_PERMISSIONS_MODERN = new String[] {
@@ -184,9 +200,11 @@ public class MainActivity extends AppCompatActivity
         // Set up batch mode controls
         setupBatchModeControls();
         
+        // Load saved resolution preference
+        loadResolutionPreference();
+        
         // Set up navigation drawer
         setupNavigationDrawer();
-        
         Log.d(TAG, "onCreate: Setting up click listeners");
         // Set click listeners
         captureButton.setOnClickListener(v -> takePhoto());
@@ -536,12 +554,27 @@ public class MainActivity extends AppCompatActivity
             contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
             contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
             
+            // Apply resolution settings if not HIGH (original)
+            if (currentResolution != PhotoResolution.HIGH) {
+                int targetWidth, targetHeight;
+                
+                if (currentResolution == PhotoResolution.MEDIUM) {
+                    targetWidth = 1280;
+                    targetHeight = 960;
+                } else { // LOW
+                    targetWidth = 640;
+                    targetHeight = 480;
+                }
+                
+                Log.d(TAG, "takePhoto: Applying resolution setting: " + currentResolution +
+                      " (" + targetWidth + "x" + targetHeight + ")");
+            }
+            
             ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(
                     getContentResolver(),
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     contentValues)
                     .build();
-            
             captureImage(outputOptions);
         } else {
             // Before Android 10 - Use File Storage
@@ -555,13 +588,133 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
             
+            // Apply resolution settings if not HIGH (original)
+            if (currentResolution != PhotoResolution.HIGH) {
+                int targetWidth, targetHeight;
+                
+                if (currentResolution == PhotoResolution.MEDIUM) {
+                    targetWidth = 1280;
+                    targetHeight = 960;
+                } else { // LOW
+                    targetWidth = 640;
+                    targetHeight = 480;
+                }
+                
+                Log.d(TAG, "takePhoto: Applying resolution setting: " + currentResolution +
+                      " (" + targetWidth + "x" + targetHeight + ")");
+            }
+            
             File photoFile = new File(directory, filename + ".jpg");
             ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
-            
             captureImage(outputOptions);
         }
     }
-    
+    /**
+     * Load the saved resolution preference
+     */
+    private void loadResolutionPreference() {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String resolutionStr = prefs.getString(PREF_RESOLUTION, PhotoResolution.MEDIUM.name());
+        try {
+            currentResolution = PhotoResolution.valueOf(resolutionStr);
+        } catch (IllegalArgumentException e) {
+            // In case of invalid preference value, use default
+            currentResolution = PhotoResolution.MEDIUM;
+        }
+        Log.d(TAG, "Loaded resolution preference: " + currentResolution);
+    }
+
+    /**
+     * Save the selected resolution preference
+     */
+    private void saveResolutionPreference(PhotoResolution resolution) {
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_RESOLUTION, resolution.name());
+        editor.apply();
+        Log.d(TAG, "Saved resolution preference: " + resolution);
+    }
+
+    /**
+     * Show the resolution selection dialog
+     */
+    private void showResolutionDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_resolution, null);
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        
+        final AlertDialog dialog = builder.create();
+        
+        // Find UI elements
+        RadioGroup radioGroup = dialogView.findViewById(R.id.resolution_radio_group);
+        RadioButton radioHigh = dialogView.findViewById(R.id.radio_high);
+        RadioButton radioMedium = dialogView.findViewById(R.id.radio_medium);
+        RadioButton radioLow = dialogView.findViewById(R.id.radio_low);
+        Button buttonCancel = dialogView.findViewById(R.id.button_cancel);
+        Button buttonOk = dialogView.findViewById(R.id.button_ok);
+        
+        // Set initial selected option based on current resolution
+        switch (currentResolution) {
+            case HIGH:
+                radioHigh.setChecked(true);
+                break;
+            case MEDIUM:
+                radioMedium.setChecked(true);
+                break;
+            case LOW:
+                radioLow.setChecked(true);
+                break;
+        }
+        
+        // Set click listeners for buttons
+        buttonCancel.setOnClickListener(v -> dialog.dismiss());
+        
+        buttonOk.setOnClickListener(v -> {
+            // Get selected resolution
+            PhotoResolution newResolution;
+            int selectedId = radioGroup.getCheckedRadioButtonId();
+            
+            if (selectedId == R.id.radio_high) {
+                newResolution = PhotoResolution.HIGH;
+            } else if (selectedId == R.id.radio_low) {
+                newResolution = PhotoResolution.LOW;
+            } else {
+                newResolution = PhotoResolution.MEDIUM;
+            }
+            
+            // Update resolution if changed
+            if (newResolution != currentResolution) {
+                currentResolution = newResolution;
+                saveResolutionPreference(currentResolution);
+                
+                // Show confirmation toast
+                String resolutionName = "";
+                switch (currentResolution) {
+                    case HIGH:
+                        resolutionName = getString(R.string.resolution_high);
+                        break;
+                    case MEDIUM:
+                        resolutionName = getString(R.string.resolution_medium);
+                        break;
+                    case LOW:
+                        resolutionName = getString(R.string.resolution_low);
+                        break;
+                }
+                
+                Toast.makeText(
+                    MainActivity.this, 
+                    getString(R.string.resolution_changed, resolutionName), 
+                    Toast.LENGTH_SHORT
+                ).show();
+            }
+            
+            dialog.dismiss();
+        });
+        
+        dialog.show();
+    }
+
     private void captureImage(ImageCapture.OutputFileOptions outputOptions) {
         Log.d(TAG, "captureImage: Processing image capture");
         imageCapture.takePicture(
@@ -577,8 +730,8 @@ public class MainActivity extends AppCompatActivity
                             // Save the URI for later use
                             lastCapturedImageUri = savedUri;
                         }
-                        Log.d(TAG, msg);
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Photo saved successfully", Toast.LENGTH_SHORT).show());
+                        final String finalMsg = msg;
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, finalMsg, Toast.LENGTH_SHORT).show());
                     }
                     
                     @Override
@@ -647,6 +800,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_edit) {
             // Placeholder for future implementation
             Toast.makeText(this, "Edit feature coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_resolution) {
+            // Show resolution selection dialog
+            showResolutionDialog();
         } else if (id == R.id.nav_statistics) {
             // Launch the Statistics activity
             Intent statisticsIntent = new Intent(this, StatisticsActivity.class);
@@ -656,7 +812,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
             showAboutDialog();
         }
-        // Close the drawer
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }

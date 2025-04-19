@@ -26,6 +26,7 @@
     <string name="nav_metatags">Meta-tags</string>
     <string name="nav_edit">Edit</string>
     <string name="nav_statistics">Statistics</string>
+    <string name="nav_resolution">Resolution</string>
     <string name="nav_help">Help</string>
     <string name="nav_about">About</string>
     
@@ -50,5 +51,14 @@
     <string name="exif_metadata_title">EXIF Metadata</string>
     <string name="iptc_metadata_title">IPTC Metadata</string>
     <string name="no_metadata_available">No metadata available</string>
+    
+    <!-- Resolution Feature -->
+    <string name="resolution_title">Photo Resolution</string>
+    <string name="resolution_high">High</string>
+    <string name="resolution_medium">Medium (Default)</string>
+    <string name="resolution_low">Low</string>
+    <string name="resolution_high_desc">Original camera resolution</string>
+    <string name="resolution_medium_desc">1280 × 960 pixels</string>
+    <string name="resolution_low_desc">640 × 480 pixels</string>
+    <string name="resolution_changed">Resolution set to %1$s</string>
 </resources>
-

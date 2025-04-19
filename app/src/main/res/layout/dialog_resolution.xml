@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/resolution_title"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp">
+
+        <RadioGroup
+            android:id="@+id/resolution_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- High Resolution Option -->
+            <RadioButton
+                android:id="@+id/radio_high"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution_high"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:paddingTop="8dp"
+                android:paddingBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution_high_desc"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Medium Resolution Option -->
+            <RadioButton
+                android:id="@+id/radio_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution_medium"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:paddingTop="8dp"
+                android:paddingBottom="4dp"
+                android:checked="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution_medium_desc"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Low Resolution Option -->
+            <RadioButton
+                android:id="@+id/radio_low"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution_low"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:paddingTop="8dp"
+                android:paddingBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution_low_desc"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="12dp" />
+
+        </RadioGroup>
+    </ScrollView>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/button_cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/cancel"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/button_ok"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/ok" />
+    </LinearLayout>
+</LinearLayout>
+
