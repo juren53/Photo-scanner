@@ -36,14 +36,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.common.util.concurrent.ListenableFuture;
+import android.content.ContentUris;
+import android.media.ExifInterface;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,7 +57,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import com.google.common.util.concurrent.ListenableFuture;
 public class MainActivity extends AppCompatActivity 
         implements NavigationView.OnNavigationItemSelectedListener {
     
@@ -822,8 +824,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         
         if (id == R.id.nav_metatags) {
-            // Placeholder for future implementation
-            Toast.makeText(this, "Meta-tags feature coming soon", Toast.LENGTH_SHORT).show();
+            // Show metadata for the most recent image
+            showMetadataDialog();
         } else if (id == R.id.nav_edit) {
             // Placeholder for future implementation
             Toast.makeText(this, "Edit feature coming soon", Toast.LENGTH_SHORT).show();
@@ -900,7 +902,287 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+    /**
+     * Show a dialog displaying metadata for the most recent image in the gallery
+     */
+    private void showMetadataDialog() {
+        Log.d(TAG, "showMetadataDialog: Loading metadata for the most recent image");
+        
+        // Create dialog using the metadata layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_metadata, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        
+        // Find views in the dialog
+        ImageView thumbnailView = dialogView.findViewById(R.id.metadata_image_thumbnail);
+        TextView imageNameText = dialogView.findViewById(R.id.metadata_image_name);
+        TextView imageDimensionsText = dialogView.findViewById(R.id.metadata_image_dimensions);
+        TextView exifContentText = dialogView.findViewById(R.id.metadata_exif_content);
+        TextView iptcContentText = dialogView.findViewById(R.id.metadata_iptc_content);
+        TextView otherContentText = dialogView.findViewById(R.id.metadata_other_content);
+        ProgressBar loadingIndicator = dialogView.findViewById(R.id.metadata_loading_indicator);
+        Button closeButton = dialogView.findViewById(R.id.metadata_close_button);
+        
+        // Set close button listener
+        closeButton.setText(getString(R.string.metadata_close_button));
+        closeButton.setOnClickListener(v -> dialog.dismiss());
+        
+        // Show loading state
+        loadingIndicator.setVisibility(View.VISIBLE);
+        thumbnailView.setVisibility(View.INVISIBLE);
+        imageNameText.setText("");
+        imageDimensionsText.setText("");
+        exifContentText.setText(getString(R.string.metadata_loading));
+        iptcContentText.setText(getString(R.string.metadata_loading));
+        otherContentText.setText(getString(R.string.metadata_loading));
+        
+        // Show dialog while loading
+        dialog.show();
+        
+        // Load data in background thread
+        new Thread(() -> {
+            try {
+                // Try to use lastCapturedImageUri first if available
+                Uri imageUri = null;
+                if (lastCapturedImageUri != null) {
+                    // Verify the URI is still valid
+                    try {
+                        getContentResolver().openInputStream(lastCapturedImageUri).close();
+                        imageUri = lastCapturedImageUri;
+                        Log.d(TAG, "Using last captured image: " + imageUri);
+                    } catch (Exception e) {
+                        Log.d(TAG, "Last captured URI invalid, finding most recent image instead");
+                        imageUri = null;
+                    }
+                }
+                
+                // If no lastCapturedImageUri or it's invalid, find most recent image
+                if (imageUri == null) {
+                    imageUri = findMostRecentImageUri();
+                }
+                
+                if (imageUri != null) {
+                    // Load image metadata and thumbnail
+                    String imagePath = getPathFromUri(imageUri);
+                    String imageName = getFileNameFromUri(imageUri);
+                    long fileSize = getFileSizeFromUri(imageUri);
+                    int[] dimensions = getImageDimensions(imageUri);
+                    
+                    // Format size and dimensions text
+                    String formattedSize = formatSize(fileSize);
+                    String dimensionsText = dimensions[0] + " × " + dimensions[1] + " pixels, " + formattedSize;
+                    
+                    // Load thumbnail
+                    final Bitmap thumbnail = getThumbnail(imageUri);
+                    
+                    // Extract metadata
+                    String exifMetadata = "";
+                    if (imagePath != null) {
+                        exifMetadata = extractExifMetadata(imagePath);
+                    }
+                    
+                    // IPTC metadata (placeholder - not fully implemented)
+                    String iptcMetadata = "IPTC metadata extraction requires additional libraries.\n\nThis will be implemented in a future update.";
+                    
+                    // Other metadata (file info, etc.)
+                    String otherMetadata = extractOtherMetadata(imageUri);
+                    
+                    // Final values for UI thread
+                    final String finalImageName = imageName;
+                    final String finalDimensionsText = dimensionsText;
+                    final String finalExifMetadata = exifMetadata;
+                    final String finalIptcMetadata = iptcMetadata;
+                    final String finalOtherMetadata = otherMetadata;
+                    
+                    // Update UI on main thread
+                    runOnUiThread(() -> {
+                        // Hide loading, show thumbnail
+                        loadingIndicator.setVisibility(View.GONE);
+                        thumbnailView.setVisibility(View.VISIBLE);
+                        
+                        // Set thumbnail
+                        if (thumbnail != null) {
+                            thumbnailView.setImageBitmap(thumbnail);
+                        } else {
+                            // Show placeholder if thumbnail couldn't be loaded
+                            thumbnailView.setImageResource(android.R.drawable.ic_menu_gallery);
+                        }
+                        
+                        // Set text values
+                        imageNameText.setText(finalImageName);
+                        imageDimensionsText.setText(finalDimensionsText);
+                        
+                        // Show metadata with fallbacks for empty sections
+                        if (finalExifMetadata.isEmpty()) {
+                            exifContentText.setText(R.string.no_metadata_available);
+                        } else {
+                            exifContentText.setText(finalExifMetadata);
+                        }
+                        
+                        if (finalIptcMetadata.isEmpty()) {
+                            iptcContentText.setText(R.string.no_metadata_available);
+                        } else {
+                            iptcContentText.setText(finalIptcMetadata);
+                        }
+                        
+                        if (finalOtherMetadata.isEmpty()) {
+                            otherContentText.setText(R.string.no_metadata_available);
+                        } else {
+                            otherContentText.setText(finalOtherMetadata);
+                        }
+                    });
+                } else {
+                    // No images found
+                    runOnUiThread(() -> {
+                        loadingIndicator.setVisibility(View.GONE);
+                        thumbnailView.setVisibility(View.VISIBLE);
+                        thumbnailView.setImageResource(android.R.drawable.ic_menu_gallery);
+                        imageNameText.setText(R.string.metadata_no_image);
+                        imageDimensionsText.setText("");
+                        exifContentText.setText(R.string.no_metadata_available);
+                        iptcContentText.setText(R.string.no_metadata_available);
+                        otherContentText.setText(R.string.no_metadata_available);
+                    });
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading metadata: " + e.getMessage(), e);
+                runOnUiThread(() -> {
+                    loadingIndicator.setVisibility(View.GONE);
+                    thumbnailView.setVisibility(View.VISIBLE);
+                    thumbnailView.setImageResource(android.R.drawable.ic_menu_gallery);
+                    imageNameText.setText("Error loading image");
+                    imageDimensionsText.setText("");
+                    exifContentText.setText("Error: " + e.getMessage());
+                    iptcContentText.setText(R.string.no_metadata_available);
+                    otherContentText.setText(R.string.no_metadata_available);
+                });
+            }
+        }).start();
+    }
     
+    /**
+     * Find the URI of the most recent image in the gallery
+     */
+    private Uri findMostRecentImageUri() {
+        String[] projection = {
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DATE_TAKEN
+        };
+        
+        String sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC";
+        
+        try (Cursor cursor = getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                null,
+                null,
+                sortOrder)) {
+            
+            if (cursor != null && cursor.moveToFirst()) {
+                long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                return ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error finding most recent image: " + e.getMessage(), e);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Get file path from URI
+     */
+    private String getPathFromUri(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        
+        try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                return cursor.getString(columnIndex);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting file path: " + e.getMessage(), e);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Get file name from URI
+     */
+    private String getFileNameFromUri(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DISPLAY_NAME };
+        
+        try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+                return cursor.getString(columnIndex);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting file name: " + e.getMessage(), e);
+        }
+        
+        return "Unknown";
+    }
+    
+    /**
+     * Get file size from URI
+     */
+    private long getFileSizeFromUri(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.SIZE };
+        
+        try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+                return cursor.getLong(columnIndex);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting file size: " + e.getMessage(), e);
+        }
+        
+        return 0;
+    }
+    
+    /**
+     * Get image dimensions from URI
+     */
+    private int[] getImageDimensions(Uri uri) {
+        String[] projection = { 
+            MediaStore.Images.Media.WIDTH,
+            MediaStore.Images.Media.HEIGHT
+        };
+        
+        try (Cursor cursor = getContentResolver().query(uri, projection, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int width = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH));
+                int height = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT));
+                
+                // If dimensions not available, try decoding image bounds
+                if (width <= 0 || height <= 0) {
+                    try (InputStream input = getContentResolver().openInputStream(uri)) {
+                        if (input != null) {
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inJustDecodeBounds = true;
+                            BitmapFactory.decodeStream(input, null, options);
+                            width = options.outWidth;
+                            height = options.outHeight;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error decoding image bounds: " + e.getMessage(), e);
+                    }
+                }
+                
+                return new int[] { width, height };
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting image dimensions: " + e.getMessage(), e);
+        }
+        
+        return new int[] { 0, 0 };
+    }
+
     /**
      * Resize the image at the given URI to the target dimensions
      * @param imageUri Uri of the image to resize
@@ -1034,6 +1316,251 @@ public class MainActivity extends AppCompatActivity
             
             // Return Uri for the resized file
             return Uri.fromFile(resizedFile);
+        }
+    }
+
+    /**
+     * Extract EXIF metadata from an image file
+     */
+    private String extractExifMetadata(String imagePath) {
+        StringBuilder exifInfo = new StringBuilder();
+        
+        try {
+            ExifInterface exif = new ExifInterface(imagePath);
+            
+            // Camera make and model
+            String make = exif.getAttribute(ExifInterface.TAG_MAKE);
+            String model = exif.getAttribute(ExifInterface.TAG_MODEL);
+            if (make != null || model != null) {
+                exifInfo.append(getString(R.string.metadata_label_camera)).append(": ")
+                       .append(make != null ? make : "")
+                       .append(model != null ? " " + model : "")
+                       .append("\n\n");
+            }
+            
+            // Date and time
+            String datetime = exif.getAttribute(ExifInterface.TAG_DATETIME);
+            if (datetime != null) {
+                exifInfo.append(getString(R.string.metadata_label_date)).append(": ")
+                       .append(datetime).append("\n\n");
+            }
+            
+            // Exposure time
+            String exposure = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+            if (exposure != null) {
+                float exposureValue = Float.parseFloat(exposure);
+                exifInfo.append(getString(R.string.metadata_label_exposure)).append(": ");
+                if (exposureValue < 1) {
+                    exifInfo.append("1/").append(Math.round(1 / exposureValue));
+                } else {
+                    exifInfo.append(exposureValue);
+                }
+                exifInfo.append(" sec\n\n");
+            }
+            
+            // Aperture
+            String aperture = exif.getAttribute(ExifInterface.TAG_F_NUMBER);
+            if (aperture == null) {
+                aperture = exif.getAttribute(ExifInterface.TAG_APERTURE_VALUE);
+            }
+            if (aperture != null) {
+                exifInfo.append(getString(R.string.metadata_label_aperture)).append(": f/")
+                       .append(aperture).append("\n\n");
+            }
+            
+            // ISO speed
+            String iso = exif.getAttribute(ExifInterface.TAG_ISO_SPEED_RATINGS);
+            if (iso != null) {
+                exifInfo.append(getString(R.string.metadata_label_iso)).append(": ")
+                       .append(iso).append("\n\n");
+            }
+            
+            // Focal length
+            String focalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+            if (focalLength != null) {
+                exifInfo.append(getString(R.string.metadata_label_focal_length)).append(": ")
+                       .append(focalLength).append("mm\n\n");
+            }
+            
+            // Flash
+            String flash = exif.getAttribute(ExifInterface.TAG_FLASH);
+            if (flash != null) {
+                boolean flashFired = (Integer.parseInt(flash) & 0x1) != 0;
+                exifInfo.append(getString(R.string.metadata_label_flash)).append(": ")
+                       .append(flashFired ? "Used" : "Not used").append("\n\n");
+            }
+            
+            // White balance
+            String whiteBalance = exif.getAttribute(ExifInterface.TAG_WHITE_BALANCE);
+            if (whiteBalance != null) {
+                int whiteBalanceValue = Integer.parseInt(whiteBalance);
+                exifInfo.append(getString(R.string.metadata_label_white_balance)).append(": ")
+                       .append(whiteBalanceValue == 0 ? "Auto" : "Manual").append("\n\n");
+            }
+            
+            // GPS information
+            String latitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            String longitudeRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+            String latitude = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            String longitude = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+
+            if (latitude != null && longitude != null && latitudeRef != null && longitudeRef != null) {
+                float lat = convertToDegree(latitude);
+                float lng = convertToDegree(longitude);
+                
+                // If southern hemisphere or western hemisphere, negate the value
+                if (latitudeRef.equals("S")) {
+                    lat = -lat;
+                }
+                if (longitudeRef.equals("W")) {
+                    lng = -lng;
+                }
+                
+                exifInfo.append(getString(R.string.metadata_label_gps)).append(": ")
+                       .append(String.format(Locale.US, "%.6f, %.6f", lat, lng))
+                       .append("\n");
+            }
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error extracting EXIF metadata: " + e.getMessage(), e);
+            return "Error extracting EXIF metadata: " + e.getMessage();
+        }
+        
+        
+        return exifInfo.toString().trim();
+    }
+    
+    /**
+     * Convert GPS DMS format to decimal degrees
+     */
+    private float convertToDegree(String stringDMS) {
+        try {
+            String[] DMS = stringDMS.split(",", 3);
+            String[] stringD = DMS[0].split("/", 2);
+            float d0 = Float.parseFloat(stringD[0]);
+            float d1 = Float.parseFloat(stringD[1]);
+            float degrees = d0 / d1;
+
+            String[] stringM = DMS[1].split("/", 2);
+            float m0 = Float.parseFloat(stringM[0]);
+            float m1 = Float.parseFloat(stringM[1]);
+            float minutes = m0 / m1;
+
+            String[] stringS = DMS[2].split("/", 2);
+            float s0 = Float.parseFloat(stringS[0]);
+            float s1 = Float.parseFloat(stringS[1]);
+            float seconds = s0 / s1;
+
+            return degrees + (minutes / 60) + (seconds / 3600);
+        } catch (Exception e) {
+            // In case of error, return 0
+            return 0;
+        }
+    }
+    /**
+     * Extract additional metadata from an image
+     */
+    private String extractOtherMetadata(Uri imageUri) {
+        StringBuilder info = new StringBuilder();
+        
+        try {
+            // File type
+            String mimeType = getContentResolver().getType(imageUri);
+            if (mimeType != null) {
+                info.append(getString(R.string.metadata_label_file_type)).append(": ")
+                    .append(mimeType).append("\n\n");
+            }
+            
+            // File size already displayed in dimensions text
+            
+            // Color space - extract from EXIF if available
+            String path = getPathFromUri(imageUri);
+            if (path != null) {
+                try {
+                    ExifInterface exif = new ExifInterface(path);
+                    String colorSpace = exif.getAttribute(ExifInterface.TAG_COLOR_SPACE);
+                    if (colorSpace != null) {
+                        int colorSpaceValue = Integer.parseInt(colorSpace);
+                        info.append(getString(R.string.metadata_label_color_space)).append(": ")
+                            .append(colorSpaceValue == 1 ? "sRGB" : "Uncalibrated").append("\n\n");
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error getting color space: " + e.getMessage());
+                }
+            }
+            
+            // Get creation date
+            String[] projection = { MediaStore.Images.Media.DATE_ADDED };
+            try (Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    long dateAdded = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED));
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                    String dateString = sdf.format(new Date(dateAdded * 1000)); // Convert from seconds to milliseconds
+                    info.append("Date added: ").append(dateString);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error getting date added: " + e.getMessage());
+            }
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error extracting other metadata: " + e.getMessage(), e);
+            return "Error extracting additional metadata: " + e.getMessage();
+        }
+        
+        return info.toString().trim();
+    }
+    
+    /**
+     * Load a thumbnail of an image from a Uri
+     */
+    private Bitmap getThumbnail(Uri imageUri) {
+        try {
+            // First try to use the MediaStore thumbnail API
+            Bitmap thumbnail = null;
+            
+            // Get the image ID
+            String[] projection = { MediaStore.Images.Media._ID };
+            try (Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                    thumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+                            getContentResolver(), id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+                }
+            }
+            
+            // If MediaStore thumbnail failed, create our own thumbnail
+            if (thumbnail == null) {
+                // Load a scaled-down version of the image
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 8; // Load at 1/8 the original size
+                
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                if (inputStream != null) {
+                    thumbnail = BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+                }
+            }
+            
+            return thumbnail;
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading thumbnail: " + e.getMessage(), e);
+            return null;
+        }
+    }
+    
+    /**
+     * Format file size in bytes to KB, MB, etc.
+     */
+    private String formatSize(long sizeInBytes) {
+        if (sizeInBytes < 1024) {
+            return sizeInBytes + " B";
+        } else if (sizeInBytes < 1024 * 1024) {
+            return (sizeInBytes / 1024) + " KB";
+        } else if (sizeInBytes < 1024 * 1024 * 1024) {
+            return String.format(Locale.US, "%.2f MB", sizeInBytes / (1024.0 * 1024.0));
+        } else {
+            return String.format(Locale.US, "%.2f GB", sizeInBytes / (1024.0 * 1024.0 * 1024.0));
         }
     }
 }
