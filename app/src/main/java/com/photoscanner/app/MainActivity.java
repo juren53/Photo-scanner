@@ -30,19 +30,25 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -496,11 +502,10 @@ public class MainActivity extends AppCompatActivity
                 Log.d(TAG, "startCamera: Creating preview use case");
                 Preview preview = new Preview.Builder().build();
                 preview.setSurfaceProvider(viewFinder.getSurfaceProvider());
-                
                 // Image capture use case
                 Log.d(TAG, "startCamera: Creating image capture use case");
                 imageCapture = new ImageCapture.Builder()
-                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
                         .build();
                 // Select back camera as default
                 CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
@@ -714,7 +719,6 @@ public class MainActivity extends AppCompatActivity
         
         dialog.show();
     }
-
     private void captureImage(ImageCapture.OutputFileOptions outputOptions) {
         Log.d(TAG, "captureImage: Processing image capture");
         imageCapture.takePicture(
@@ -725,11 +729,34 @@ public class MainActivity extends AppCompatActivity
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         Uri savedUri = outputFileResults.getSavedUri();
                         String msg = "Photo saved successfully";
+                        
+                        // Apply resolution settings if not HIGH resolution
+                        if (savedUri != null && currentResolution != PhotoResolution.HIGH) {
+                            try {
+                                // Get target dimensions based on selected resolution
+                                int targetWidth, targetHeight;
+                                if (currentResolution == PhotoResolution.MEDIUM) {
+                                    targetWidth = 1280;
+                                    targetHeight = 960;
+                                } else { // LOW
+                                    targetWidth = 640;
+                                    targetHeight = 480;
+                                }
+                                
+                                // Resize the image
+                                savedUri = resizeImage(savedUri, targetWidth, targetHeight);
+                                msg = "Photo saved and resized to " + targetWidth + "x" + targetHeight;
+                            } catch (Exception e) {
+                                Log.e(TAG, "Failed to resize image: " + e.getMessage(), e);
+                                msg = "Photo saved but resizing failed";
+                            }
+                        }
+                        
                         if (savedUri != null) {
-                            msg = "Photo saved: " + savedUri.toString();
                             // Save the URI for later use
                             lastCapturedImageUri = savedUri;
                         }
+                        
                         final String finalMsg = msg;
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, finalMsg, Toast.LENGTH_SHORT).show());
                     }
@@ -871,6 +898,142 @@ public class MainActivity extends AppCompatActivity
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+    
+    /**
+     * Resize the image at the given URI to the target dimensions
+     * @param imageUri Uri of the image to resize
+     * @param targetWidth Target width in pixels
+     * @param targetHeight Target height in pixels
+     * @return Uri of the resized image
+     * @throws IOException If an error occurs during resizing
+     */
+    private Uri resizeImage(Uri imageUri, int targetWidth, int targetHeight) throws IOException {
+        Log.d(TAG, "Resizing image to " + targetWidth + "x" + targetHeight);
+        
+        // Load the bitmap from the Uri
+        InputStream inputStream = getContentResolver().openInputStream(imageUri);
+        if (inputStream == null) {
+            throw new IOException("Could not open input stream from Uri");
+        }
+        
+        // First decode with inJustDecodeBounds=true to check dimensions
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(inputStream, null, options);
+        inputStream.close();
+        
+        // Calculate inSampleSize for memory-efficient loading
+        int inSampleSize = 1;
+        int halfWidth = options.outWidth / 2;
+        int halfHeight = options.outHeight / 2;
+        while ((halfWidth / inSampleSize) > targetWidth &&
+               (halfHeight / inSampleSize) > targetHeight) {
+            inSampleSize *= 2;
+        }
+        
+        // Decode bitmap with calculated inSampleSize
+        inputStream = getContentResolver().openInputStream(imageUri);
+        if (inputStream == null) {
+            throw new IOException("Could not open input stream from Uri");
+        }
+        options = new BitmapFactory.Options();
+        options.inSampleSize = inSampleSize;
+        Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream, null, options);
+        inputStream.close();
+        
+        if (originalBitmap == null) {
+            throw new IOException("Failed to decode bitmap from Uri");
+        }
+        
+        // Calculate scaling to maintain aspect ratio
+        float originalWidth = originalBitmap.getWidth();
+        float originalHeight = originalBitmap.getHeight();
+        float scaleWidth = targetWidth / originalWidth;
+        float scaleHeight = targetHeight / originalHeight;
+        float scaleFactor = Math.min(scaleWidth, scaleHeight);
+        
+        // Create matrix for scaling
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleFactor, scaleFactor);
+        
+        // Create scaled bitmap
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                originalBitmap, 
+                0, 0, 
+                originalBitmap.getWidth(), 
+                originalBitmap.getHeight(), 
+                matrix, 
+                true);
+        
+        // Release original bitmap to free memory
+        if (originalBitmap != resizedBitmap) {
+            originalBitmap.recycle();
+        }
+        
+        // Save resized bitmap
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // For Android 10+, use MediaStore
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, "Resized_" + System.currentTimeMillis() + ".jpg");
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+            
+            Uri resizedUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            if (resizedUri == null) {
+                throw new IOException("Failed to create MediaStore entry for resized image");
+            }
+            
+            OutputStream outputStream = getContentResolver().openOutputStream(resizedUri);
+            if (outputStream == null) {
+                throw new IOException("Failed to open output stream for resized image");
+            }
+            
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream);
+            outputStream.close();
+            
+            // Delete the original image
+            getContentResolver().delete(imageUri, null, null);
+            
+            return resizedUri;
+        } else {
+            // For older Android versions, use file storage
+            File directory = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES), "PhotoScanner");
+            
+            if (!directory.exists() && !directory.mkdirs()) {
+                throw new IOException("Failed to create directory for resized image");
+            }
+            
+            // Create a filename for the resized image
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            String filename = "Resized_" + timestamp + ".jpg";
+            File resizedFile = new File(directory, filename);
+            
+            // Save the bitmap to file
+            FileOutputStream outputStream = new FileOutputStream(resizedFile);
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream);
+            outputStream.close();
+            
+            // Delete the original file
+            // First get the file path from the Uri
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String filePath = cursor.getString(columnIndex);
+                    File originalFile = new File(filePath);
+                    if (originalFile.exists()) {
+                        originalFile.delete();
+                    }
+                }
+                cursor.close();
+            }
+            
+            // Return Uri for the resized file
+            return Uri.fromFile(resizedFile);
         }
     }
 }
