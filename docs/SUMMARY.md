@@ -1,4 +1,4 @@
-# Summary
+# Summary of Photo Scanner Documents
 
 ## User Guide
 * [Introduction](user-guide/introduction.md)
