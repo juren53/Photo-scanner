@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
     private PhotoResolution currentResolution = PhotoResolution.MEDIUM; // Default
     private String nameTemplate = "Photo";  // Default
     private int nameCounter = 1;            // Default
-    
+    private boolean isCameraOn = false;     // Track camera state
 
     // Define required permissions
     private static final String[] REQUIRED_PERMISSIONS_MODERN = new String[] {
@@ -207,6 +207,8 @@ public class MainActivity extends AppCompatActivity
         // Initialize all UI elements
         viewFinder = findViewById(R.id.viewFinder);
         captureButton = findViewById(R.id.captureButton);
+        // Set initial button text
+        captureButton.setText(R.string.capture_button_start);
         viewPhotosButton = findViewById(R.id.viewPhotosButton);
         permissionContainer = findViewById(R.id.permissionContainer);
         requestPermissionButton = findViewById(R.id.requestPermissionButton);
@@ -232,7 +234,15 @@ public class MainActivity extends AppCompatActivity
         // Set up navigation drawer
         setupNavigationDrawer();
         // Set click listeners
-        captureButton.setOnClickListener(v -> takePhoto());
+        captureButton.setOnClickListener(v -> {
+            if (!isCameraOn) {
+                // First press - Start camera
+                startCamera();
+            } else {
+                // Second press - Take photo
+                takePhoto();
+            }
+        });
         viewPhotosButton.setOnClickListener(v -> openGallery());
         requestPermissionButton.setOnClickListener(v -> {
             Log.d(TAG, "Permission button clicked");
@@ -273,7 +283,7 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "onCreate: All permissions already granted, starting camera");
             permissionContainer.setVisibility(View.GONE);
             viewFinder.setVisibility(View.VISIBLE);
-            startCamera();
+            // Camera will be started when user presses the capture button
         } else {
             Log.d(TAG, "onCreate: Permissions not granted, showing permission UI");
             requestPermissionButton.setText("Grant Permissions");
@@ -309,9 +319,10 @@ public class MainActivity extends AppCompatActivity
             viewFinder.setVisibility(View.VISIBLE);
             
             // Only restart camera if it's not already set up
-            if (imageCapture == null) {
-                startCamera();
-            }
+            // Camera will be started when user presses the capture button
+            // if (imageCapture == null) {
+            //     startCamera();
+            // }
         } else {
             Log.d(TAG, "onResume: Permissions not granted, showing permission UI");
             permissionContainer.setVisibility(View.VISIBLE);
@@ -494,9 +505,10 @@ public class MainActivity extends AppCompatActivity
                 viewFinder.setVisibility(View.VISIBLE);
                 
                 // Try to start the camera directly
-                if (imageCapture == null) {
-                    startCamera();
-                }
+                // Camera will be started when user presses the capture button
+                // if (imageCapture == null) {
+                //     startCamera();
+                // }
                 
                 Toast.makeText(this, "Permissions bypassed, attempting to start camera", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
@@ -540,8 +552,10 @@ public class MainActivity extends AppCompatActivity
                             this, cameraSelector, preview, imageCapture);
                     
                     Log.d(TAG, "startCamera: Camera setup complete");
+                    isCameraOn = true;
                     runOnUiThread(() -> {
                         Toast.makeText(MainActivity.this, "Camera ready", Toast.LENGTH_SHORT).show();
+                        captureButton.setText(R.string.capture_button_take);
                         captureButton.setEnabled(true);
                         viewPhotosButton.setEnabled(true);
                     });
@@ -853,7 +867,6 @@ public class MainActivity extends AppCompatActivity
                 nameTemplate = template;
                 nameCounter = counter;
                 saveNamingPreferences();
-                
                 Toast.makeText(MainActivity.this, 
                     getString(R.string.rename_template_saved), Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
@@ -865,8 +878,9 @@ public class MainActivity extends AppCompatActivity
         
         dialog.show();
     }
-    
+
     /**
+     * Process image capture and save the image
      * Process image capture and save the image
      */
     private void captureImage(ImageCapture.OutputFileOptions outputOptions) {
@@ -875,6 +889,7 @@ public class MainActivity extends AppCompatActivity
                 outputOptions,
                 cameraExecutor,
                 new ImageCapture.OnImageSavedCallback() {
+                    @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                         Uri savedUri = outputFileResults.getSavedUri();
                         String msg = "Photo saved successfully";
@@ -915,8 +930,10 @@ public class MainActivity extends AppCompatActivity
                             nameCounter++;
                             saveNamingPreferences();
                             Log.d(TAG, "Incremented name counter to: " + nameCounter);
+
+                            // Stop camera after taking the photo
+                            stopCamera();
                         }
-                        
                         final String finalMsg = msg;
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, finalMsg, Toast.LENGTH_SHORT).show());
                     }
@@ -928,6 +945,38 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         );
+    }
+    
+    /**
+     * Stop and release the camera to save battery
+     */
+    private void stopCamera() {
+        // Get camera provider future
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = 
+                ProcessCameraProvider.getInstance(this);
+        
+        cameraProviderFuture.addListener(() -> {
+            try {
+                // Get camera provider
+                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                
+                // Unbind all use cases
+                cameraProvider.unbindAll();
+                
+                // Update state
+                imageCapture = null;
+                isCameraOn = false;
+                
+                // Update UI on main thread
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this, "Camera turned off to save battery", Toast.LENGTH_SHORT).show();
+                    captureButton.setText(R.string.capture_button_start);
+                });
+                
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Error stopping camera", e);
+            }
+        }, ContextCompat.getMainExecutor(this));
     }
     
     private void openGallery() {

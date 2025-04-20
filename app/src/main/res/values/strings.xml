@@ -18,6 +18,8 @@
     <string name="single_mode_description">Capture one photo at a time</string>
     <string name="continue_batch">Continue Batch</string>
     <string name="capture_button">Capture</string>
+    <string name="capture_button_start">Start Camera</string>
+    <string name="capture_button_take">Capture</string>
     <string name="permission_required">Camera permission is required to use this app</string>
     
     <!-- Navigation Drawer -->
