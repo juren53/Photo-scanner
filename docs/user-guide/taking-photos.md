@@ -1,6 +1,6 @@
-# Taking Photos with Photo Scanner
+# Scanning Images with Photo Scanner
 
-This guide explains how to use the Photo Scanner app to capture high-quality photos of documents, photographs, and other printed materials.
+This guide explains how to use the Photo Scanner app to capture high-quality images of documents, photographs, and other printed materials.
 
 ## Camera Interface
 
