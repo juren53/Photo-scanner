@@ -1,6 +1,6 @@
 # Photo Scanner App - Development Status
 
-## Completed Features (v1.2)
+## Completed Features (v1.3)
 
 - Implemented navigation drawer with hamburger menu
 - Added About, Help, and Settings dialogs
@@ -32,7 +32,7 @@
 - Need to implement full IPTC metadata support beyond basic EXIF data
 - Optimizing performance for larger image collections
 
-## Recommended Next Steps (v1.3)
+## Recommended Next Steps (v1.4)
 
 1. Implement the Edit feature for basic photo editing capabilities:
    - Rotation, cropping, and basic adjustments
@@ -64,5 +64,5 @@
 
 ## Implementation Notes
 
-The main structure of MainActivity has been significantly improved in v1.2 with proper organization and removal of duplicated code. The custom file naming system enhances user experience by allowing sequential naming of scanned photos. The batch scanning components are complete and functional but need to be integrated. The app is now ready for distribution with properly signed release builds.
+The main structure of MainActivity has been significantly improved in v1.3 with proper organization and removal of duplicated code. The custom file naming system enhances user experience by allowing sequential naming of scanned photos. The batch scanning components are complete and functional but need to be integrated. The app is now ready for distribution with properly signed release builds.
 

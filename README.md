@@ -110,7 +110,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Consistent styling and better layout
 - See [v1.1 Release Notes](v1.1-release-notes.md) for more details
 
-### v1.2 (Current)
+### v1.2
 - Custom file naming system with templates
 - Sequential numbering for consecutive scans
 - Persistent naming preferences between sessions
@@ -118,6 +118,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Fixed GPS coordinates extraction
 - Improved error handling and stability
 - See [v1.2 Release Notes](v1.2-release-notes.md) for more details
+
+### v1.3 (Current)
+- Battery-saving camera mode
+- Improved metadata handling
+- Enhanced UI responsiveness
+- Bug fixes and performance improvements
 
 ## Acknowledgements
 

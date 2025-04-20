@@ -1049,6 +1049,8 @@ public class MainActivity extends AppCompatActivity
             showHelpDialog();
         } else if (id == R.id.nav_about) {
             showAboutDialog();
+        } else if (id == R.id.nav_exit) {
+            finish();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

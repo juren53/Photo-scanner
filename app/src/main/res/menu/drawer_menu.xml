@@ -36,6 +36,10 @@
                 android:id="@+id/nav_about"
                 android:icon="@android:drawable/ic_menu_info_details"
                 android:title="@string/nav_about" />
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@android:drawable/ic_menu_close_clear_cancel"
+                android:title="@string/nav_exit" />
         </menu>
     </item>
 </menu>

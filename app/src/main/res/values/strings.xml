@@ -4,7 +4,7 @@
     <string name="continue_scanning">Would you like to continue scanning more photos?</string>
     <string name="batch_empty">No photos in batch</string>
     <string name="finish_batch">Finish Batch</string>
-    <string name="view_photos">View Photos</string>
+    <string name="view_photos">Process Image</string>
     <string name="preview_image">Preview image</string>
     <string name="retry">Retry</string>
     <string name="crop">Crop</string>
@@ -23,6 +23,7 @@
     <string name="permission_required">Camera permission is required to use this app</string>
     
     <!-- Navigation Drawer -->
+    <!-- Navigation Drawer -->
     <string name="nav_drawer_open">Open navigation drawer</string>
     <string name="nav_drawer_close">Close navigation drawer</string>
     <string name="nav_metatags">Meta-tags</string>
@@ -32,16 +33,16 @@
     <string name="nav_resolution">Resolution</string>
     <string name="nav_help">Help</string>
     <string name="nav_about">About</string>
-    <!-- About Dialog -->
+    <string name="nav_exit">Exit</string>
     <string name="about_title">About Photo Scanner</string>
     <string name="about_developer">Developer: Photo Scanner Team</string>
     <string name="about_release_date">Release Date: April 19, 2025</string>
-    <string name="about_version">Version: 1.2</string>
+    <string name="about_version">Version: 1.3</string>
     <string name="about_close">Close</string>
     
     <!-- Help Dialog -->
     <string name="help_title">Help</string>
-    <string name="help_content">This app allows you to capture and organize your photos.\n\n• Use the camera button to take photos\n• View your photos in the gallery\n• Enable batch mode to capture multiple photos</string>
+    <string name="help_content">This app allows you to capture and process images.\n\n- Press the Start Camera button to turn on the camera. Press the button a second time to capture the image.\n\n- Press the Process Image button to rotate, crop and perform other processes on the image.\n\nFor more detail help go to: {this is a placeholder for a link to be provided in the near future}</string>
     <string name="help_close">Got it</string>
     
     <!-- Statistics Activity -->
