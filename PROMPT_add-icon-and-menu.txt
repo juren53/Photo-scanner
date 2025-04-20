@@ -1,0 +1,11 @@
+I would like add the following to the photo-scanner app:
+
+- add the ican ICON_photo-scanner-2.jpg as the app icon
+- add a hamburger menu to the uper left portion of the UI with a 
+    - Meta-tags  [ place holder ]
+    - Edit       [ place holder ]
+    - Help linked to 
+    - About - developers name, rel date, version number
+- generally improve UI
+    -specifically the buttons at the bottom of the UI need to me aligned and sized
+    

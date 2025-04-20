@@ -26,6 +26,7 @@
     <string name="nav_metatags">Meta-tags</string>
     <string name="nav_edit">Edit</string>
     <string name="nav_rename">File Naming Template</string>
+    <string name="nav_statistics">Statistics</string>
     <string name="nav_resolution">Resolution</string>
     <string name="nav_help">Help</string>
     <string name="nav_about">About</string>
@@ -98,3 +99,5 @@
     <string name="rename_cancel">Cancel</string>
     <string name="rename_template_saved">Naming template saved. Future photos will use this pattern.</string>
     <string name="rename_invalid_counter">Please enter a valid number</string>
+    <string name="rename_empty_error">Name template cannot be empty</string>
+</resources>
