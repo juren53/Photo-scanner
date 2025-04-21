@@ -1,4 +1,6 @@
-# Getting Started with Photo Scanner
+
+*Last update: April 21, 2025*
+
 
 This guide will help you install Photo Scanner and begin using its basic features.
 

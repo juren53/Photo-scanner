@@ -1,5 +1,7 @@
 # Introduction to Photo Scanner
 
+*Last update: April 21, 2025*
+
 ## What is Photo Scanner?
 
 Photo Scanner is a powerful yet easy-to-use mobile application designed to help you capture, process, and organize photographs using your smartphone camera. Whether you want to digitize old family photos, scan documents, or create digital copies of printed materials, Photo Scanner provides the tools you need to do it efficiently and with high quality.

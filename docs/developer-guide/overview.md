@@ -1,7 +1,8 @@
 # Photo Scanner Project Overview
 
-This document provides an overview of the Photo Scanner project architecture, components, and development philosophy.
+*Last update: April 21, 2025*
 
+This document provides an overview of the Photo Scanner project architecture, components, and development philosophy.
 ## Project Architecture
 
 Photo Scanner is an Android application built using Java. The project follows a modular architecture that separates concerns and promotes maintainability.
@@ -50,9 +51,8 @@ The application is structured into the following major components:
 
 - **Android SDK**: Minimum API level 21 (Android 5.0)
 - **Java**: Primary programming language
-- **CameraX**: Modern Android camera API
-- **AndroidX**: Android Jetpack libraries
-- **Material Design Components**: UI component library
+- **CameraManager**: Handles camera initialization and lifecycle
+- **FileNameManager**: Manages file naming templates and counters
 - **ExifInterface**: For handling image metadata
 
 ## Development Environment

@@ -1,5 +1,7 @@
 # Summary of Photo Scanner Documents
 
+*Last update: April 21, 2025*
+
 ## User Guide
 * [Introduction](user-guide/introduction.md)
 * [Getting Started](user-guide/getting-started.md)
@@ -8,7 +10,6 @@
   * [Processing Images](user-guide/processing-images.md)
   * [Viewing and Managing Photos](user-guide/viewing-managing.md)
 * [Advanced Features](user-guide/advanced-features.md)
-  * [Batch Scanning](user-guide/batch-scanning.md)
   * [File Naming Templates](user-guide/file-naming.md)
   * [Resolution Settings](user-guide/resolution.md)
   * [Metadata Management](user-guide/metadata.md)

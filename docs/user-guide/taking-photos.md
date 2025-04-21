@@ -1,4 +1,6 @@
-# Taking Photos with Photo Scanner
+
+*Last update: April 21, 2025*
+
 
 This guide explains how to use the Photo Scanner app to capture high-quality photos of documents, photographs, and other printed materials.
 
@@ -11,9 +13,8 @@ The camera interface in Photo Scanner is designed to be simple yet powerful. It 
 1. **Camera Preview**: Shows the live view from your camera
 2. **Capture Button**: Takes a photo
 3. **Process Image Button**: Opens the gallery to view and process captured images
-4. **Batch Mode Toggle**: Enables sequential capture of multiple photos
-5. **Version Display**: Shows the current app version
-6. **Menu Icon**: Opens the navigation drawer for additional options
+4. **Version Display**: Shows the current app version
+5. **Menu Icon**: Opens the navigation drawer for additional options
 
 ## Preparing to Take Photos
 
@@ -48,22 +49,6 @@ For the best results when scanning photos or documents:
    - Adjust your position if needed to get a clear view
 4. When ready, press the "Capture" button to take the photo
 5. The app will automatically process and save the image
-
-## Using Batch Mode
-
-Batch mode allows you to capture multiple photos in sequence, which is ideal for digitizing collections of photos or multi-page documents.
-
-1. On the main screen, toggle on "Batch Mode" using the switch in the control panel
-2. Press the "Start Camera" button to initialize the camera
-3. Take your first photo by pressing the "Capture" button
-4. After each capture:
-   - A counter will show how many photos are in the current batch
-   - The app will be ready to capture the next photo immediately
-5. Continue capturing photos as needed
-6. When finished with the batch, you can:
-   - Tap "Review Batch" to see all captured photos
-   - Toggle off Batch Mode to return to single photo mode
-
 ## Adjusting Resolution
 
 Photo Scanner allows you to choose different resolution settings based on your needs:

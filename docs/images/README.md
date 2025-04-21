@@ -1,12 +1,13 @@
-# Documentation Images
+
+*Last update: April 21, 2025*
+
 
 This directory contains all images used in the Photo Scanner documentation. 
+## Image Naming Convention
 
-## Image Guidelines
-
-When adding images to the documentation, please follow these guidelines:
-
-1. **Format**: Use PNG format for screenshots and diagrams
+- Example: `feature-name-description.png`
+- Example: `metadata-extraction-flow.png`
+- Screenshot format: `screen-name-action.png` (e.g., `settings-resolution-selection.png`)
 2. **Size**: Keep image file sizes under 500KB when possible
 3. **Dimensions**: 
    - Screenshots should be no wider than 1280px
@@ -26,10 +27,9 @@ The documentation currently references images that may not exist yet. These imag
 - `camera-interface.png` - Labeled screenshot of the camera interface
 - `batch-mode.png` - Screenshot showing batch mode in action
 - `processing-options.png` - Screenshot of image processing options
-- `file-naming-template.png` - Screenshot of the file naming dialog
-- `metadata-view.png` - Screenshot of metadata viewing interface
-
-## Creating Screenshots
+- `file-naming-dialog.png` - File naming configuration dialog
+- `resolution-settings.png` - Resolution selection dialog
+- `metadata-dialog.png` - Metadata viewing interface
 
 For consistency in documentation screenshots:
 
