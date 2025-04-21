@@ -29,6 +29,21 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name=".EdgeDetectionActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".BatchReviewActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
+            
+        <activity
+            android:name=".StatisticsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
+            
         <!-- FileProvider for sharing photos -->
         <provider
             android:name="androidx.core.content.FileProvider"

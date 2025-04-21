@@ -1,6 +1,6 @@
-# Scanning Images with Photo Scanner
+# Taking Photos with Photo Scanner
 
-This guide explains how to use the Photo Scanner app to quickly capture high-quality images of documents, photographs, and other printed materials.
+This guide explains how to use the Photo Scanner app to capture high-quality photos of documents, photographs, and other printed materials.
 
 ## Camera Interface
 
@@ -101,4 +101,3 @@ After capturing photos, you'll typically want to:
 - [View and manage metadata](metadata.md) for your captured images
 
 For more information on these features, follow the links to their respective guides.
-

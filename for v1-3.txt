@@ -1,0 +1,11 @@
+for v1.3
+
+DONE - the camera is ON continuously and this seems to consume battery power. Let's modify code leave the camera off until the user presses the Capture button.   A second press of the Capture button captures the image and then turns the camera off.   DONE
+DONE - change references from "photo" to "image"
+DONE - chage "View Photos" label on left button to "View/Adjust Scanned Image"  DONE
+DONE - add an EXIT option in the Menu
+DONE update help window
+
+- add a "List Images" option in the Menu that launchs Google Files (or the system file picker) and drops the user into the "Images" section
+- add 'Save To' user defined directory option in Menu
+ - while building the list of images when the user selects 'Image Statistics' the user should see in the UI a work in process bar or some other indicator that there is work going 

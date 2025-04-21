@@ -20,4 +20,3 @@
 * [Architecture](developer-guide/architecture.md)
 * [Build Instructions](developer-guide/build.md)
 * [Contributing](developer-guide/contributing.md)
-

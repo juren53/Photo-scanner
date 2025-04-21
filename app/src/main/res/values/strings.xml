@@ -1,8 +1,113 @@
 <resources>
     <string name="app_name">Photo Scanner</string>
+    <string name="photo_added_to_batch">Photo added to batch</string>
+    <string name="continue_scanning">Would you like to continue scanning more photos?</string>
+    <string name="batch_empty">No photos in batch</string>
+    <string name="finish_batch">Finish Batch</string>
+    <string name="view_photos">Process Image</string>
+    <string name="preview_image">Preview image</string>
+    <string name="retry">Retry</string>
+    <string name="crop">Crop</string>
+    <string name="detecting_edges">Detecting edges...</string>
+    
+    <!-- Batch scanning strings -->
+    <string name="batch_mode">Batch Mode</string>
+    <string name="batch_counter">Batch: %1$d</string>
+    <string name="review_batch">Review Batch</string>
+    <string name="batch_mode_description">Capture multiple photos in sequence</string>
+    <string name="single_mode_description">Capture one photo at a time</string>
+    <string name="continue_batch">Continue Batch</string>
     <string name="capture_button">Capture</string>
-    <string name="view_photos">View Photos</string>
-    <string name="permission_required">Camera and storage permissions are required for this app</string>
-    <string name="permission_rationale">This app needs access to your camera to take photos and storage to save them</string>
+    <string name="capture_button_start">Start Camera</string>
+    <string name="capture_button_take">Capture</string>
+    <string name="permission_required">Camera permission is required to use this app</string>
+    
+    <!-- Navigation Drawer -->
+    <!-- Navigation Drawer -->
+    <string name="nav_drawer_open">Open navigation drawer</string>
+    <string name="nav_drawer_close">Close navigation drawer</string>
+    <string name="nav_metatags">Meta-tags</string>
+    <string name="nav_edit">Edit</string>
+    <string name="nav_rename">File Naming Template</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_resolution">Resolution</string>
+    <string name="nav_help">Help</string>
+    <string name="nav_about">About</string>
+    <string name="nav_exit">Exit</string>
+    <string name="about_title">About Photo Scanner</string>
+    <string name="about_developer">Developer: Photo Scanner Team</string>
+    <string name="about_release_date">Release Date: April 19, 2025</string>
+    <string name="about_version">Version: 1.3</string>
+    <string name="about_close">Close</string>
+    
+    <!-- Help Dialog -->
+    <string name="help_title">Help</string>
+    <string name="help_content"><![CDATA[
+This app allows you to capture and process images.<br/><br/>
+<ul>
+<li>Press the Start Camera button to turn on the camera. Press the button a second time to capture the image.</li><br/>
+<li>Press the Process Image button to rotate, crop and perform other processes on the image.</li>
+</ul><br/>
+For more detail help go to: <a href="https://github.com/juren53/Photo-scanner/blob/master/docs/SUMMARY.md">Online Help</a>
+]]></string>
+    <string name="help_close">Got it</string>
+    
+    <!-- Statistics Activity -->
+    <string name="statistics_title">Image Statistics</string>
+    <string name="no_images_found">No images found</string>
+    <string name="image_size_label">Size: %1$s</string>
+    <string name="image_resolution_label">Resolution: %1$s</string>
+    <string name="image_date_label">Date: %1$s</string>
+    <string name="exif_metadata_title">EXIF Metadata</string>
+    <string name="iptc_metadata_title">IPTC Metadata</string>
+    <string name="no_metadata_available">No metadata available</string>
+    
+    <!-- Resolution Feature -->
+    <string name="resolution_title">Photo Resolution</string>
+    <string name="resolution_high">High</string>
+    <string name="resolution_medium">Medium (Default)</string>
+    <string name="resolution_low">Low</string>
+    <string name="resolution_high_desc">Original camera resolution</string>
+    <string name="resolution_medium_desc">1280 × 960 pixels</string>
+    <string name="resolution_low_desc">640 × 480 pixels</string>
+    <string name="resolution_changed">Resolution set to %1$s</string>
+    
+    <!-- Metadata Dialog -->
+    <string name="metadata_title">Image Metadata</string>
+    <string name="metadata_exif_section">EXIF Metadata</string>
+    <string name="metadata_iptc_section">IPTC Metadata</string>
+    <string name="metadata_additional_section">Additional Metadata</string>
+    <string name="metadata_close_button">Close</string>
+    <string name="metadata_no_image">No images found</string>
+    <string name="metadata_loading">Loading metadata…</string>
+    <string name="metadata_dimensions">%1$d × %2$d pixels, %3$s</string>
+    
+    <!-- Metadata Labels -->
+    <string name="metadata_label_camera">Camera</string>
+    <string name="metadata_label_date">Date</string>
+    <string name="metadata_label_exposure">Exposure</string>
+    <string name="metadata_label_aperture">Aperture</string>
+    <string name="metadata_label_iso">ISO</string>
+    <string name="metadata_label_focal_length">Focal Length</string>
+    <string name="metadata_label_flash">Flash</string>
+    <string name="metadata_label_white_balance">White Balance</string>
+    <string name="metadata_label_gps">Location</string>
+    <string name="metadata_label_title">Title</string>
+    <string name="metadata_label_creator">Creator</string>
+    <string name="metadata_label_copyright">Copyright</string>
+    <string name="metadata_label_keywords">Keywords</string>
+    <string name="metadata_label_file_type">File Type</string>
+    <string name="metadata_label_file_size">File Size</string>
+    <string name="metadata_label_color_space">Color Space</string>
+    
+    <!-- Rename Template Dialog -->
+    <string name="rename_template_title">Set File Naming Template</string>
+    <string name="rename_template_hint">Name Template (e.g., Family_Photo)</string>
+    <string name="rename_counter_hint">Starting Number</string>
+    <string name="rename_preview_label">Preview:</string>
+    <string name="rename_save">Save</string>
+    <string name="rename_cancel">Cancel</string>
+    <string name="rename_template_saved">Naming template saved. Future photos will use this pattern.</string>
+    <string name="rename_invalid_counter">Please enter a valid number</string>
+    <string name="rename_empty_error">Name template cannot be empty</string>
 </resources>
-

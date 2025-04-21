@@ -50,4 +50,3 @@ This documentation is designed to be published using GitBook. For information on
 ## License
 
 This documentation is licensed under the same license as the Photo Scanner application. See the LICENSE file in the root directory for details.
-
