@@ -17,7 +17,7 @@ The User Guide is designed for end-users of the Photo Scanner application. It pr
 - Getting started with Photo Scanner
 - Taking and processing photos
 - Managing your photo collection
-- Using advanced features like batch scanning and metadata management
+- Using advanced features like metadata management [tbd]
 - Troubleshooting common issues
 
 ### Developer Guide
