@@ -1,0 +1,42 @@
+name: Update Documentation
+
+on:
+  push:
+    branches:
+      - documentation
+    paths:
+      - 'help/**'
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout documentation branch
+        uses: actions/checkout@v3
+        with:
+          ref: documentation
+          path: doc-branch
+
+      - name: Checkout master branch
+        uses: actions/checkout@v3
+        with:
+          ref: master
+          path: main-branch
+
+      - name: Copy documentation files to master branch
+        run: |
+          rm -rf main-branch/docs/
+          mkdir -p main-branch/docs/
+          cp -r doc-branch/help/* main-branch/docs/
+
+      - name: Commit and push changes
+        run: |
+          cd main-branch
+          git config user.name "GitHub Actions Bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "Update Help System files from documentation branch" || echo "No changes to commit"
+          git push origin master
+
