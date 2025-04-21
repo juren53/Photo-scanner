@@ -110,22 +110,6 @@ public class MainActivity extends AppCompatActivity
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     
-    /**
-     * Set up batch mode controls, including switch functionality and button visibility
-     */
-    private void setupBatchModeControls() {
-        Log.d(TAG, "Setting up batch mode controls");
-        batchControlPanel = findViewById(R.id.batchControlPanel);
-        batchModeSwitch = findViewById(R.id.batchModeSwitch);
-        batchModeSwitch = findViewById(R.id.batchModeSwitch);
-        batchCounterTextView = findViewById(R.id.batchCounterTextView);
-        reviewBatchButton = findViewById(R.id.reviewBatchButton);
-        
-        // BatchScanManager references removed for v1.0 compatibility
-        // if (batchScanManager == null) {
-        //     batchScanManager = BatchScanManager.getInstance();
-        // }
-    }
     // UI components
     private PreviewView viewFinder;
     private MaterialButton captureButton;
@@ -143,15 +127,7 @@ public class MainActivity extends AppCompatActivity
     private final ExecutorService cameraExecutor = Executors.newSingleThreadExecutor();
     private ImageCapture imageCapture;
     
-    // Batch mode UI components
-    private View batchControlPanel;
-    private SwitchCompat batchModeSwitch;
-    private TextView batchCounterTextView;
-    private MaterialButton reviewBatchButton;
-    // BatchScanManager removed for v1.0 compatibility
-    // private BatchScanManager batchScanManager;
-    private boolean isBatchMode = false;
-    // Store the most recently captured image URI
+    
     private Uri lastCapturedImageUri = null;
     // Activity launcher for permissions
     private final ActivityResultLauncher<String[]> requestPermissionLauncher = 
@@ -230,8 +206,6 @@ public class MainActivity extends AppCompatActivity
         // Set version text
         String versionText = "v" + BuildConfig.VERSION_NAME;
         versionTextView.setText(versionText);
-        // Set up batch mode controls
-        setupBatchModeControls();
         
         // Load saved resolution preference
         // Load saved resolution preference
@@ -314,12 +288,6 @@ public class MainActivity extends AppCompatActivity
         boolean hasPermissions = allPermissionsGranted();
         Log.d(TAG, "onResume: Permissions check result: " + hasPermissions);
         
-        // Update batch counter in case it changed
-        try {
-            updateBatchCounterUI();
-        } catch (Exception e) {
-            Log.e(TAG, "Error updating batch counter", e);
-        }
         
         // Update UI based on current permission status
         if (hasPermissions) {
@@ -409,12 +377,6 @@ public class MainActivity extends AppCompatActivity
                    " | Granted: " + granted);
         }
         Log.d(TAG, "======================================");
-    }
-
-    private void updateBatchCounterUI() {
-        // Placeholder for missing method
-        Log.d(TAG, "updateBatchCounterUI called");
-        // No actual implementation since BatchScanManager is excluded for v1.0
     }
     
     private boolean allPermissionsGranted() {

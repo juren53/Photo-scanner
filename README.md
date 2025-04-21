@@ -119,11 +119,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Improved error handling and stability
 - See [v1.2 Release Notes](v1.2-release-notes.md) for more details
 
-### v1.3 (Current)
+### v1.3
 - Battery-saving camera mode
 - Improved metadata handling
 - Enhanced UI responsiveness
 - Bug fixes and performance improvements
+
+### v1.4 (Current)
+- Edit feature for basic photo editing capabilities
+- Metadata editing functionality
+- Organization and categorization features
 
 ## Acknowledgements
 

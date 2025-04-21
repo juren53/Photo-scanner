@@ -1,28 +1,19 @@
 <resources>
     <string name="app_name">Photo Scanner</string>
-    <string name="photo_added_to_batch">Photo added to batch</string>
     <string name="continue_scanning">Would you like to continue scanning more photos?</string>
-    <string name="batch_empty">No photos in batch</string>
-    <string name="finish_batch">Finish Batch</string>
     <string name="view_photos">Process Image</string>
     <string name="preview_image">Preview image</string>
     <string name="retry">Retry</string>
     <string name="crop">Crop</string>
     <string name="detecting_edges">Detecting edges...</string>
     
-    <!-- Batch scanning strings -->
-    <string name="batch_mode">Batch Mode</string>
-    <string name="batch_counter">Batch: %1$d</string>
-    <string name="review_batch">Review Batch</string>
-    <string name="batch_mode_description">Capture multiple photos in sequence</string>
+    <!-- Camera mode strings -->
     <string name="single_mode_description">Capture one photo at a time</string>
-    <string name="continue_batch">Continue Batch</string>
     <string name="capture_button">Capture</string>
     <string name="capture_button_start">Start Camera</string>
     <string name="capture_button_take">Capture</string>
     <string name="permission_required">Camera permission is required to use this app</string>
     
-    <!-- Navigation Drawer -->
     <!-- Navigation Drawer -->
     <string name="nav_drawer_open">Open navigation drawer</string>
     <string name="nav_drawer_close">Close navigation drawer</string>
@@ -34,10 +25,12 @@
     <string name="nav_help">Help</string>
     <string name="nav_about">About</string>
     <string name="nav_exit">Exit</string>
+    
+    <!-- About Dialog -->
     <string name="about_title">About Photo Scanner</string>
     <string name="about_developer">Developer: Photo Scanner Team</string>
     <string name="about_release_date">Release Date: April 19, 2025</string>
-    <string name="about_version">Version: 1.3</string>
+    <string name="about_version">Version: 1.4</string>
     <string name="about_close">Close</string>
     
     <!-- Help Dialog -->

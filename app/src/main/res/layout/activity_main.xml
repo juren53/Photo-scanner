@@ -38,65 +38,11 @@
         android:id="@+id/viewFinder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/batchControlPanel"
+        app:layout_constraintBottom_toTopOf="@+id/buttonPanel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Batch Mode Controls -->
-    <LinearLayout
-        android:id="@+id/batchControlPanel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="#333333"
-        app:layout_constraintBottom_toTopOf="@+id/buttonPanel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        
-        <TextView
-            android:id="@+id/batchModeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/batch_mode"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:layout_marginEnd="8dp" />
-            
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/batchModeSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
-            
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-            
-        <TextView
-            android:id="@+id/batchCounterTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/batch_counter"
-            android:textColor="#FFFFFF"
-            android:visibility="gone"
-            android:layout_marginEnd="8dp" />
-            
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/reviewBatchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/review_batch"
-            android:textSize="12sp"
-            android:visibility="gone"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:textColor="#FFFFFF"
-            app:strokeColor="#FFFFFF" />
-    </LinearLayout>
     <!-- Button Panel -->
     <LinearLayout
         android:id="@+id/buttonPanel"
@@ -249,7 +195,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:alpha="0.7"
-        android:text="v1.3"
+        android:text="v1.4"
         android:textColor="#FFFFFF"
         android:textSize="12sp"
         android:textStyle="bold"

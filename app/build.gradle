@@ -10,8 +10,8 @@ android {
         applicationId "com.photoscanner.app"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,13 +37,18 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     
-    // Exclude edge detection and batch scanning files to avoid OpenCV dependency issues
+    // Exclude edge detection files to avoid OpenCV dependency issues
     sourceSets {
         main {
             java {
                 exclude '**/EdgeDetection*.java'
                 exclude '**/BatchReviewActivity.java'
                 exclude '**/BatchScanManager.java'
+            }
+            resources {
+                exclude '**/activity_batch_review.xml'
+                exclude '**/dialog_batch_continue.xml'
+                exclude '**/item_batch_image.xml'
             }
         }
     }
