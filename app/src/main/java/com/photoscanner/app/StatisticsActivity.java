@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class StatisticsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TextView noImagesText;
     private Toolbar toolbar;
+    private ProgressBar progressBar;
 
     private List<ImageStats> imageStatsList;
     private ImageStatsAdapter adapter;
@@ -59,6 +61,7 @@ public class StatisticsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_statistics);
         noImagesText = findViewById(R.id.text_no_images);
         toolbar = findViewById(R.id.toolbar_statistics);
+        progressBar = findViewById(R.id.progress_bar_loading);
 
         // Set up toolbar
         setSupportActionBar(toolbar);
@@ -126,7 +129,8 @@ public class StatisticsActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             noImagesText.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -198,6 +202,9 @@ public class StatisticsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<ImageStats> result) {
+            // Hide progress bar
+            progressBar.setVisibility(View.GONE);
+            
             imageStatsList.clear();
             imageStatsList.addAll(result);
             adapter.notifyDataSetChanged();
@@ -205,6 +212,8 @@ public class StatisticsActivity extends AppCompatActivity {
             if (imageStatsList.isEmpty()) {
                 noImagesText.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
             }
         }
     }

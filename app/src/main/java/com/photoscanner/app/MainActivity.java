@@ -16,13 +16,22 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.core.view.GravityCompat;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -816,11 +825,25 @@ public class MainActivity extends AppCompatActivity
         TextView previewText = dialogView.findViewById(R.id.rename_preview_text);
         Button cancelButton = dialogView.findViewById(R.id.rename_cancel_button);
         Button saveButton = dialogView.findViewById(R.id.rename_save_button);
+        TextView saveLocationText = dialogView.findViewById(R.id.save_location_text);
         
         // Set current values
         templateInput.setText(nameTemplate);
         counterInput.setText(String.valueOf(nameCounter));
         
+        // Set the save location text based on Android version - show full path
+        File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String fullPath;
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ (API 29+) uses MediaStore and saves to Pictures directory
+            fullPath = picturesDir.getAbsolutePath();
+        } else {
+            // Older Android versions save to Pictures/PhotoScanner
+            fullPath = new File(picturesDir, "PhotoScanner").getAbsolutePath();
+        }
+        
+        saveLocationText.setText("Scanned images will be saved at:\n" + fullPath);
         // Update preview when text changes
         TextWatcher previewUpdater = new TextWatcher() {
             @Override
@@ -1093,6 +1116,18 @@ public class MainActivity extends AppCompatActivity
         
         final AlertDialog dialog = builder.create();
         
+        // Find the help content TextView and enable link clicking
+        TextView helpContentText = dialogView.findViewById(R.id.help_content_text);
+        if (helpContentText != null) {
+            // Handle HTML deprecation for different Android versions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                helpContentText.setText(Html.fromHtml(getString(R.string.help_content), Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                helpContentText.setText(Html.fromHtml(getString(R.string.help_content)));
+            }
+            helpContentText.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+        
         // Set click listener for close button
         MaterialButton closeButton = dialogView.findViewById(R.id.help_close_button);
         if (closeButton != null) {
@@ -1101,7 +1136,6 @@ public class MainActivity extends AppCompatActivity
         
         dialog.show();
     }
-    
     /**
      * Handle back button press - close drawer if open
      */

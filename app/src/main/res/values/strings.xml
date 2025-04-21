@@ -42,7 +42,14 @@
     
     <!-- Help Dialog -->
     <string name="help_title">Help</string>
-    <string name="help_content">This app allows you to capture and process images.\n\n- Press the Start Camera button to turn on the camera. Press the button a second time to capture the image.\n\n- Press the Process Image button to rotate, crop and perform other processes on the image.\n\nFor more detail help go to: {this is a placeholder for a link to be provided in the near future}</string>
+    <string name="help_content"><![CDATA[
+This app allows you to capture and process images.<br/><br/>
+<ul>
+<li>Press the Start Camera button to turn on the camera. Press the button a second time to capture the image.</li><br/>
+<li>Press the Process Image button to rotate, crop and perform other processes on the image.</li>
+</ul><br/>
+For more detail help go to: <a href="https://github.com/juren53/Photo-scanner/blob/master/docs/SUMMARY.md">Online Help</a>
+]]></string>
     <string name="help_close">Got it</string>
     
     <!-- Statistics Activity -->

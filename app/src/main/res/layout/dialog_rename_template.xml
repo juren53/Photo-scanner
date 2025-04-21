@@ -86,10 +86,20 @@
 
         <Button
             android:id="@+id/rename_save_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/rename_save" />
     </LinearLayout>
-</LinearLayout>
 
+    <!-- Save location information -->
+    <TextView
+        android:id="@+id/save_location_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="14sp"
+        android:textColor="#E0E0E0"
+        android:gravity="center"
+        android:lineSpacingExtra="2sp"
+        android:text="Scanned images will be saved at:\nPictures/PhotoScanner" />
+</LinearLayout>
