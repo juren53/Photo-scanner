@@ -226,7 +226,6 @@ Photo Scanner has plans to expand metadata capabilities in upcoming versions:
 
 After exploring metadata management, you might want to learn about:
 
-- [Batch Scanning](batch-scanning.md) to efficiently capture multiple photos
 - [File Naming Templates](file-naming.md) for organizing your collection
 - [Viewing and Managing Photos](viewing-managing.md) to better utilize your metadata
 

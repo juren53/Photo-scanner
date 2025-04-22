@@ -207,7 +207,6 @@ To delete multiple photos at once:
 After reviewing how to manage your photo collection, you might want to explore:
 
 - [Advanced Features](advanced-features.md) for power users
-- [Batch Scanning](batch-scanning.md) to efficiently capture multiple photos
 - [Resolution Settings](resolution.md) to optimize quality and storage space
 - [File Naming Templates](file-naming.md) for more detailed organization options
 

@@ -10,7 +10,6 @@ Photo Scanner is a powerful yet easy-to-use mobile application designed to help 
 
 - **Simple Capture Interface**: Take photos with a clean, intuitive camera interface designed for document and photo scanning
 - **Image Processing**: Automatically enhance scanned images with features like edge detection, perspective correction, and color optimization
-- **Batch Scanning**: Capture multiple photos in sequence for efficient digitization of photo collections
 - **Custom File Naming**: Create naming templates for organized file management
 - **Resolution Control**: Choose the quality level that suits your needs, from space-saving low resolution to detailed high resolution
 - **Metadata Management**: View and manage EXIF and IPTC metadata for your images
