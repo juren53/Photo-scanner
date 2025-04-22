@@ -109,7 +109,7 @@ For maximum efficiency, Photo Scanner's advanced features work well together:
 - **Create Project-Specific Templates**: Use different naming templates for different types of materials
 - **Reset Counter Strategically**: Reset the naming counter when starting a new logical group of photos
 - **Balance Quality and Space**: Choose resolution based on the content's importance and detail level
-- **Verify First Few Scans**: After starting a batch scan, check the first few results to ensure quality before proceeding
+- **Verify First Few Scans**: After starting a scanning session, check the first few results to ensure quality before proceeding
 - **Organize by Collections**: Create a system where different naming templates indicate different collections
 - **Use Battery-Saving Mode**: For long scanning sessions, enable the battery-saving camera mode
 - **Back Up Regularly**: Export your scanned photos to a computer or cloud storage frequently
@@ -123,7 +123,6 @@ All advanced features are accessible through the navigation drawer menu:
    - "File Naming Template" for naming options
    - "Resolution" for quality settings
    - "Meta-tags" for metadata viewing
-   - (Batch scanning is enabled through a toggle switch in the main interface)
 
 ## Future Advanced Features
 

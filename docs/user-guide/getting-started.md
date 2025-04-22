@@ -52,7 +52,6 @@ The main screen of Photo Scanner consists of the following elements:
 2. **Camera Preview**: Shows the live view from your camera
 3. **Capture Button**: Takes a photo
 4. **Process Image Button**: Opens the gallery to view and process captured images
-5. **Batch Mode Switch**: Enables capturing multiple photos in sequence
 
 ### Navigation Drawer
 
@@ -89,7 +88,6 @@ Access the navigation drawer by tapping the menu icon (☰) in the top-left corn
 
 Now that you've installed Photo Scanner and learned the basics, you can explore more advanced features:
 
-- Learn how to use [Batch Scanning](batch-scanning.md) to capture multiple photos efficiently
 - Explore [Processing Images](processing-images.md) to enhance your scanned photos
 - Set up [File Naming Templates](file-naming.md) to organize your digital collection
 - Adjust [Resolution Settings](resolution.md) for different scanning needs
