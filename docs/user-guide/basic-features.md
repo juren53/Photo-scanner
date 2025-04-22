@@ -76,5 +76,3 @@ If you're new to Photo Scanner, we recommend going through each of the basic fea
 
 Once you're comfortable with these basic features, you can explore the [Advanced Features](advanced-features.md) section to learn about more powerful capabilities.
 
-
-[← Back to Table of Contents](../SUMMARY.md)

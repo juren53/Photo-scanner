@@ -175,5 +175,3 @@ After processing your images, you may want to:
 
 For more advanced processing needs, consider using specialized desktop software after exporting your images from Photo Scanner.
 
-
-[← Back to Table of Contents](../SUMMARY.md)

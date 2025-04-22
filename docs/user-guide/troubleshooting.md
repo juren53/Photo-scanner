@@ -415,5 +415,3 @@ If you're still experiencing issues after consulting this guide, you might want 
 
 For specific feature troubleshooting, refer to the dedicated guides for [resolution settings](resolution.md) and [file naming](file-naming.md).
 
-
-[← Back to Table of Contents](../SUMMARY.md)

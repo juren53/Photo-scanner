@@ -1,4 +1,7 @@
+
 # Photo Scanner Documentation
+
+*Last update: April 21, 2025*
 
 Welcome to the Photo Scanner documentation! This repository contains comprehensive guides for both users and developers of the Photo Scanner application.
 
@@ -17,7 +20,7 @@ The User Guide is designed for end-users of the Photo Scanner application. It pr
 - Getting started with Photo Scanner
 - Taking and processing photos
 - Managing your photo collection
-- Using advanced features like batch scanning and metadata management
+- Using advanced features like metadata management
 - Troubleshooting common issues
 
 ### Developer Guide

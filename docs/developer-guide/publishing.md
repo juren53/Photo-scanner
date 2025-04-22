@@ -1,5 +1,7 @@
 # Publishing to GitBook
 
+*Last update: April 21, 2025*
+
 This guide explains how to set up and publish the Photo Scanner documentation to GitBook while managing the content in the private GitHub repository.
 
 ## Overview

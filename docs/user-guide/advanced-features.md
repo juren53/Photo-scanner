@@ -143,5 +143,3 @@ Explore each advanced feature in detail:
 
 For users who have mastered all features, check the [Troubleshooting](troubleshooting.md) guide for solutions to common issues.
 
-
-[← Back to Table of Contents](../SUMMARY.md)
