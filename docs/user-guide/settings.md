@@ -243,3 +243,5 @@ After configuring your settings, you might want to explore:
 
 For specific settings, you can learn more in the dedicated guides for [Resolution Settings](resolution.md) and [File Naming Templates](file-naming.md).
 
+
+[← Back to Table of Contents](../SUMMARY.md)

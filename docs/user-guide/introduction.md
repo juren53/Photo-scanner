@@ -53,3 +53,4 @@ Each section includes:
 
 We hope you find Photo Scanner valuable for your digitization needs!
 
+[← Back to Table of Contents](../SUMMARY.md)

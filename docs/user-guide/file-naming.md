@@ -155,3 +155,5 @@ After setting up your file naming template, you might want to explore:
 
 For more advanced features, check out the [Resolution Settings](resolution.md) guide.
 
+
+[← Back to Table of Contents](../SUMMARY.md)

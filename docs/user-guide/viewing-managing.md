@@ -213,3 +213,5 @@ After reviewing how to manage your photo collection, you might want to explore:
 
 Remember that good organization habits from the start will save you time as your digital collection grows.
 
+
+[← Back to Table of Contents](../SUMMARY.md)

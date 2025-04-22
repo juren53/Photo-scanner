@@ -86,3 +86,5 @@ After capturing photos, you'll typically want to:
 - [View and manage metadata](metadata.md) for your captured images
 
 For more information on these features, follow the links to their respective guides.
+
+[← Back to Table of Contents](../SUMMARY.md)

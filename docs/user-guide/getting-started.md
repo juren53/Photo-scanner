@@ -107,3 +107,5 @@ If you encounter issues during installation or first use:
 
 For more help, see the [Troubleshooting](troubleshooting.md) section.
 
+
+[← Back to Table of Contents](../SUMMARY.md)

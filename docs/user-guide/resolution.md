@@ -202,3 +202,5 @@ After configuring your resolution settings, you might want to explore:
 
 For more information on advanced features, check out the [Metadata Management](metadata.md) guide.
 
+
+[← Back to Table of Contents](../SUMMARY.md)

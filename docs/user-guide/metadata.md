@@ -232,3 +232,5 @@ After exploring metadata management, you might want to learn about:
 
 For general app settings, check out the [Settings and Preferences](settings.md) guide.
 
+
+[← Back to Table of Contents](../SUMMARY.md)
