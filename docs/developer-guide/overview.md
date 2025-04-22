@@ -41,7 +41,6 @@ The application is structured into the following major components:
 ### Key Components
 
 - **MainActivity**: Entry point of the application, handling navigation and camera initialization
-- **BatchScanManager**: Manages the batch scanning workflow
 - **EdgeDetectionUtils**: Provides algorithms for detecting document edges
 - **FileNamingManager**: Handles custom file naming templates
 - **MetadataExtractor**: Extracts and processes image metadata
@@ -84,7 +83,6 @@ photo-scanner/
 │   │   │   │       └── photoscanner/
 │   │   │   │           └── app/
 │   │   │   │               ├── MainActivity.java
-│   │   │   │               ├── batch/         # Batch scanning components
 │   │   │   │               ├── camera/        # Camera interaction code
 │   │   │   │               ├── edge/          # Edge detection algorithms
 │   │   │   │               ├── metadata/      # Metadata handling
